@@ -3,8 +3,10 @@ package com.jeseromero.yourvocabulary.persistence;
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.jeseromero.yourvocabulary.model.Language;
+import com.jeseromero.yourvocabulary.model.LanguageWord;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Version 1.0
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 
 public class LanguageManager {
 
-	ArrayList<Language> languages;
+	private ArrayList<Language> languages;
 
 	public LanguageManager() {
 		languages = new ArrayList<>();
@@ -33,24 +35,36 @@ public class LanguageManager {
 	}
 
 	private void load() {
-		for (Model model : new Select().from(Language.class).orderBy("NAME ASC").execute()) {
+		for (Model model : new Select().all().from(Language.class).orderBy("NAME ASC").execute()) {
 			Language language = (Language) model;
 
 			languages.add(language);
+		}
+
+		for (Language language : languages) {
+			List<LanguageWord> languageWords = new Select().all().from(LanguageWord.class).where("LANGUAGE = '" + language.getId() + "'").execute();
+
+			for (LanguageWord languageWord : languageWords) {
+
+				language.addWord(languageWord.getWord());
+
+			}
 		}
 	}
 
 	private void commit() {
 		for (Language language : languages) {
-			language.save();
+			language.saveAll();
 		}
 	}
 
-	public void deleteAll() {
+	public Language selectLanguage(long id) {
 		for (Language language : languages) {
-			language.delete();
+			if (language.getId() == id) {
+				return language;
+			}
 		}
 
-		languages.clear();
+		return null;
 	}
 }

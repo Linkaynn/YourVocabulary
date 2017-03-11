@@ -12,15 +12,15 @@ import com.activeandroid.annotation.Table;
 public class LanguageWord extends Model {
 
 	@Column(name = "LANGUAGE", onDelete = Column.ForeignKeyAction.CASCADE)
-	private Language recipe;
+	private Language language;
 
 	@Column(name = "WORD", onDelete = Column.ForeignKeyAction.CASCADE)
 	private Word word;
 
-	public LanguageWord(Language recipe, Word word) {
+	public LanguageWord(Language language, Word word) {
 		super();
 
-		this.recipe = recipe;
+		this.language = language;
 		this.word = word;
 	}
 
@@ -28,8 +28,8 @@ public class LanguageWord extends Model {
 		super();
 	}
 
-	public Language getRecipe() {
-		return recipe;
+	public Language getLanguage() {
+		return language;
 	}
 
 	public Word getWord() {

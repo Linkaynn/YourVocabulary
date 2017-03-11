@@ -29,6 +29,8 @@ public class Language extends Model {
 
 	public Language() {
 		super();
+
+		words = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -45,5 +47,31 @@ public class Language extends Model {
 
 		return getId().equals(language.getId()) && name.equalsIgnoreCase(language.name);
 
+	}
+
+	public Collection<Word> getWords() {
+		return words;
+	}
+
+	public void addWord(Word word) {
+		if (!words.contains(word)) {
+			words.add(word);
+		}
+	}
+
+	public Long saveAll() {
+		Long valueSaved = super.save();
+
+		for (Word word : words) {
+			if (word.getId() == null) {
+				word.save();
+			}
+
+			LanguageWord languageWord = new LanguageWord(this, word);
+
+			languageWord.save();
+		}
+
+		return valueSaved;
 	}
 }

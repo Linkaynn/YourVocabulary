@@ -65,7 +65,7 @@ public class VocabularyActivity extends AppCompatActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return LanguageFragment.newInstance(position + 1);
+			return LanguageFragment.newInstance(languages.get(position));
 		}
 
 		@Override

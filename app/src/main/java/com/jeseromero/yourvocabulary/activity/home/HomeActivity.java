@@ -12,9 +12,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.Model;
+import com.activeandroid.query.Select;
+import com.activeandroid.util.ReflectionUtils;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
 import com.jeseromero.yourvocabulary.model.Language;
+import com.jeseromero.yourvocabulary.model.LanguageWord;
+import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 public class HomeActivity extends AppCompatActivity
@@ -40,15 +46,54 @@ public class HomeActivity extends AppCompatActivity
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
 
+		mock();
+	}
+
+	private void mock() {
+		ActiveAndroid.dispose();
+
+		String aaName = ReflectionUtils.getMetaData(getApplicationContext(), "AA_DB_NAME");
+
+		if (aaName == null) {
+			aaName = "yourvocabulary.db";
+		}
+
+		deleteDatabase(aaName);
+		ActiveAndroid.initialize(this);
+
+		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
+			model.delete();
+		}
+
+		for (Model model : new Select().all().from(Word.class).execute()) {
+			model.delete();
+		}
+
+		for (Model model : new Select().all().from(Language.class).execute()) {
+			model.delete();
+		}
+
 		LanguageManager languageManager = new LanguageManager();
 
-		languageManager.deleteAll();
+		Language japanese = new Language("Japanese");
 
-		languageManager.addLanguage(new Language("Japanese"));
+		japanese.addWord(new Word("思い", "Pesado"));
 
-		languageManager.addLanguage(new Language("English"));
+		languageManager.addLanguage(japanese);
 
-		languageManager.addLanguage(new Language("Spanish"));
+		Language english = new Language("English");
+
+		english.addWord(new Word("Weight", "Peso"));
+
+		languageManager.addLanguage(english);
+
+		for (Language language : new LanguageManager().selectAll()) {
+			System.out.println("LANGUAGE - " + language.getName());
+
+			for (Word word : language.getWords()) {
+				System.out.println("WORD - " + word.getValue());
+			}
+		}
 	}
 
 	@Override

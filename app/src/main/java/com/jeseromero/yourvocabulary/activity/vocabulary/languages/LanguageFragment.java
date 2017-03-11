@@ -5,9 +5,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
+import com.jeseromero.yourvocabulary.model.Language;
+import com.jeseromero.yourvocabulary.model.Word;
+import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -17,7 +24,7 @@ public class LanguageFragment extends Fragment {
 	 * The fragment argument representing the section number for this
 	 * fragment.
 	 */
-	private static final String ARG_SECTION_NUMBER = "section_number";
+	private static final String ARG_LANGUAGE_ID = "section_number";
 
 	public LanguageFragment() {
 	}
@@ -25,14 +32,15 @@ public class LanguageFragment extends Fragment {
 	/**
 	 * Returns a new instance of this fragment for the given section
 	 * number.
+	 * @param language
 	 */
-	public static LanguageFragment newInstance(int sectionNumber) {
+	public static LanguageFragment newInstance(Language language) {
 
 		LanguageFragment fragment = new LanguageFragment();
 
 		Bundle args = new Bundle();
 
-		args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+		args.putLong(ARG_LANGUAGE_ID, language.getId());
 
 		fragment.setArguments(args);
 
@@ -43,9 +51,12 @@ public class LanguageFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_vocabulary, container, false);
-		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
-		textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+		ListView listView = (ListView) rootView.findViewById(R.id.translations);
+
+		Collection<Word> words = new LanguageManager().selectLanguage(getArguments().getLong(ARG_LANGUAGE_ID)).getWords();
+
+		listView.setAdapter(new WordAdapter((ArrayList<Word>) words, getContext()));
 
 		return rootView;
 	}

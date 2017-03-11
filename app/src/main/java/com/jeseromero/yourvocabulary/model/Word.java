@@ -14,10 +14,14 @@ public class Word extends Model {
 	@Column(name = "NAME", notNull = true)
 	private String value;
 
-	public Word(String value) {
+	@Column(name = "TRANSLATION", notNull = true)
+	private String translation;
+
+	public Word(String value, String translation) {
 		super();
 
 		this.value = value;
+		this.translation = translation;
 	}
 
 	public Word() {
@@ -28,6 +32,10 @@ public class Word extends Model {
 		return value;
 	}
 
+	public String getTranslation() {
+		return translation;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -36,7 +44,6 @@ public class Word extends Model {
 
 		Word word = (Word) o;
 
-		return getId().equals(word.getId()) && value.equals(word.value);
-
+		return getId().equals(word.getId()) && value.equals(word.value) && translation.equals(word.translation);
 	}
 }
