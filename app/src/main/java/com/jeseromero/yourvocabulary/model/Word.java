@@ -3,6 +3,7 @@ package com.jeseromero.yourvocabulary.model;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
 /**
  * Version 1.0
@@ -32,8 +33,16 @@ public class Word extends Model {
 		return value;
 	}
 
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 	public String getTranslation() {
 		return translation;
+	}
+
+	public void setTranslation(String translation) {
+		this.translation = translation;
 	}
 
 	@Override
@@ -45,5 +54,14 @@ public class Word extends Model {
 		Word word = (Word) o;
 
 		return getId().equals(word.getId()) && value.equals(word.value) && translation.equals(word.translation);
+	}
+
+	public LanguageWord getRelation() {
+		return ((LanguageWord) new Select().all().from(LanguageWord.class).where("WORD = '" + getId() + "'").limit(1).execute().get(0));
+	}
+
+	@Override
+	public String toString() {
+		return value;
 	}
 }

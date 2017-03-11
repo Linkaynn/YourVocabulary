@@ -30,6 +30,12 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".manage.EditWordActivity"
+            android:label="@string/title_activity_edit_activity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <activity
             android:name=".activity.home.HomeActivity"
             android:label="@string/title_activity_home"

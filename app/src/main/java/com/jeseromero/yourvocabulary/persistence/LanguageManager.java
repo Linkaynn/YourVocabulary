@@ -44,6 +44,8 @@ public class LanguageManager {
 		for (Language language : languages) {
 			List<LanguageWord> languageWords = new Select().all().from(LanguageWord.class).where("LANGUAGE = '" + language.getId() + "'").execute();
 
+//			language.clearWords();
+
 			for (LanguageWord languageWord : languageWords) {
 
 				language.addWord(languageWord.getWord());

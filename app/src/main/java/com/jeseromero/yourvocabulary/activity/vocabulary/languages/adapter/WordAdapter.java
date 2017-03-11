@@ -48,6 +48,8 @@ public class WordAdapter extends ArrayAdapter<Word> {
 
 		}
 
+		view.setTag(word);
+
 		TextView name = (TextView) view.findViewById(R.id.value);
 		TextView translation = (TextView) view.findViewById(R.id.translation);
 

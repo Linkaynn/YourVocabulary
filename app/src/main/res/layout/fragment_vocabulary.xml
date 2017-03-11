@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@color/transparent"
+            android:longClickable="true"
             tools:listitem="@layout/word_item" />
 
     </LinearLayout>

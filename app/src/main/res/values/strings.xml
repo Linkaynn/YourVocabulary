@@ -25,4 +25,5 @@
     <string name="word_table_header_right">TRANSLATION</string>
     <string name="title_activity_text_receiver">New translation</string>
     <string name="save">Save</string>
+    <string name="title_activity_edit_activity">Edit word</string>
 </resources>

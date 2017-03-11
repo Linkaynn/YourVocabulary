@@ -53,9 +53,16 @@ public class VocabularyActivity extends AppCompatActivity {
 
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		mSectionsPagerAdapter.setLanguages(new LanguageManager().selectAll());
+	}
+
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-		private final ArrayList<Language> languages;
+		private ArrayList<Language> languages;
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -80,6 +87,11 @@ public class VocabularyActivity extends AppCompatActivity {
 			}
 
 			return languages.get(position).getName();
+		}
+
+
+		public void setLanguages(ArrayList<Language> languages) {
+			this.languages = languages;
 		}
 	}
 }

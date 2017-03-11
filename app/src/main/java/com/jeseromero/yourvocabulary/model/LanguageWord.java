@@ -32,7 +32,20 @@ public class LanguageWord extends Model {
 		return language;
 	}
 
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
+
 	public Word getWord() {
 		return word;
+	}
+
+	public void setWord(Word word) {
+		this.word = word;
+	}
+
+	@Override
+	public String toString() {
+		return language.getName() + " -- " + word.getValue();
 	}
 }
