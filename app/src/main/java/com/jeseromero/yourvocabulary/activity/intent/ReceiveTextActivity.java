@@ -20,6 +20,8 @@ import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
+import java.util.ArrayList;
+
 public class ReceiveTextActivity extends AppCompatActivity {
 
 	private EditText translationEditText;
@@ -30,7 +32,7 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 	private TextView languageTextView;
 
-	private Language language;
+	private Language language = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,15 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 		languagesList = (ListView) findViewById(R.id.languages);
 
-		languagesList.setAdapter(new LanguageAdapter(new LanguageManager().selectAll(), this));
+		ArrayList<Language> languages = new LanguageManager().selectAll();
+
+		if (languages.isEmpty()) {
+			Toast.makeText(this, "No language found", Toast.LENGTH_SHORT).show();
+
+			finish();
+		}
+
+		languagesList.setAdapter(new LanguageAdapter(languages, this));
 
 		languagesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -89,13 +99,39 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 				String translation = translationEditText.getText().toString();
 
-				language.addWord(new Word(value, translation));
+				boolean failed = false;
 
-				language.saveAll();
+				if (language != null) {
+					for (Word word : language.getWords()) {
+						if (word.getValue().equalsIgnoreCase(value) && word.getTranslation().equalsIgnoreCase(translation)) {
+							translationEditText.setError("Already exist this combination of value - translation");
+							failed = true;
+						}
+					}
+				} else {
+					Toast.makeText(this, "Select a language", Toast.LENGTH_SHORT).show();
 
-				Toast.makeText(this, "Added " + value + " as " + translation + " to " + language.getName() + " language.", Toast.LENGTH_SHORT).show();
+					failed = true;
+				}
 
-				finish();
+				if (translation.trim().isEmpty()) {
+					translationEditText.setError("Can't be empty");
+					failed = true;
+				}
+
+				if (!failed) {
+
+					language.addWord(new Word(value, translation));
+
+					language.saveAll();
+
+					Toast.makeText(this, "Added " + value + " as " + translation + " to " + language.getName() + " language.", Toast.LENGTH_SHORT).show();
+
+					finish();
+
+				} else {
+					return false;
+				}
 
 				return true;
 

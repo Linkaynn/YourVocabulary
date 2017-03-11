@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 public class LanguageAdapter extends ArrayAdapter<Language> {
-	private final ArrayList<Language> languages;
+	private ArrayList<Language> languages;
 
 	public LanguageAdapter(@NonNull ArrayList<Language> languages, @NonNull Context context) {
 		super(context, R.layout.language_item, languages);
@@ -55,5 +55,25 @@ public class LanguageAdapter extends ArrayAdapter<Language> {
 		name.setText(language.getName());
 
 		return view;
+	}
+
+	public void setLanguages(ArrayList<Language> languages) {
+		this.languages = languages;
+
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void remove(@Nullable Language object) {
+		languages.remove(object);
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void add(@Nullable Language object) {
+		if (!languages.contains(object)) {
+			languages.add(object);
+		}
+		notifyDataSetChanged();
 	}
 }

@@ -3,13 +3,18 @@ package com.jeseromero.yourvocabulary.activity.vocabulary.languages;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
@@ -21,10 +26,14 @@ import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.xml.datatype.Duration;
+
 public class LanguageFragment extends Fragment {
 
 	private static final String ARG_LANGUAGE_ID = "section_number";
 	private Language language;
+	private ListView listView;
+	private WordAdapter wordAdapter;
 
 	public LanguageFragment() {
 	}
@@ -52,17 +61,19 @@ public class LanguageFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_vocabulary, container, false);
 
-		ListView listView = (ListView) rootView.findViewById(R.id.translations);
+		listView = (ListView) rootView.findViewById(R.id.translations);
 
 		language = new LanguageManager().selectLanguage(getArguments().getLong(ARG_LANGUAGE_ID));
 
-		Collection<Word> words = language.getWords();
+		final Collection<Word> words = language.getWords();
 
-		listView.setAdapter(new WordAdapter((ArrayList<Word>) words, getContext()));
+		wordAdapter = new WordAdapter((ArrayList<Word>) words, getContext());
 
-		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		listView.setAdapter(wordAdapter);
+
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Word word = (Word) view.getTag();
 
 				System.out.println("WORD " + word.getValue());
@@ -84,15 +95,35 @@ public class LanguageFragment extends Fragment {
 								startActivity(intent);
 
 								break;
+
 							case "Remove":
+								language.removeWord(word);
+
+								language.saveAll();
+
+								wordAdapter.remove(word);
+
+								SuperActivityToast.OnButtonClickListener onButtonClickListener = new SuperActivityToast.OnButtonClickListener() {
+									@Override
+									public void onClick(View view, Parcelable token) {
+										language.addWord(word);
+
+										language.saveAll();
+
+										wordAdapter.add(word);
+									}
+								};
+
+								SuperActivityToast.create(LanguageFragment.this.getContext(), new Style(), Style.TYPE_BUTTON)
+										.setButtonText("UNDO")
+										.setOnButtonClickListener("undo_delete_word", null, onButtonClickListener)
+										.setText(word.getValue() + " deleted")
+										.setDuration(3000).show();
+
 								break;
 						}
-
-
 					}
 				});
-
-				return false;
 			}
 		});
 
