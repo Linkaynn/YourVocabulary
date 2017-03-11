@@ -1,5 +1,6 @@
-package com.jeseromero.yourvocabulary.home;
+package com.jeseromero.yourvocabulary.activity.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,6 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
+import com.jeseromero.yourvocabulary.model.Language;
+import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 public class HomeActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +39,16 @@ public class HomeActivity extends AppCompatActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+		LanguageManager languageManager = new LanguageManager();
+
+		languageManager.deleteAll();
+
+		languageManager.addLanguage(new Language("Japanese"));
+
+		languageManager.addLanguage(new Language("English"));
+
+		languageManager.addLanguage(new Language("Spanish"));
 	}
 
 	@Override
@@ -73,7 +87,7 @@ public class HomeActivity extends AppCompatActivity
 		int id = item.getItemId();
 
 		if (id == R.id.your_vocabuary) {
-			// Handle the camera action
+			startActivity(new Intent(this, VocabularyActivity.class));
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
