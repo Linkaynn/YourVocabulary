@@ -3,6 +3,7 @@ package com.jeseromero.yourvocabulary.activity.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,12 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.activeandroid.util.ReflectionUtils;
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
+import com.jeseromero.yourvocabulary.activity.language.NewLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
@@ -25,6 +30,8 @@ import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 public class HomeActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
+
+	private ListView languageListView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,19 @@ public class HomeActivity extends AppCompatActivity
 		navigationView.setNavigationItemSelectedListener(this);
 
 		mock();
+
+		languageListView = (ListView) findViewById(R.id.languages);
+
+		languageListView.setAdapter(new LanguageAdapter(new LanguageManager().selectAll(), this));
+
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addLanguageButton);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(HomeActivity.this, NewLanguageActivity.class));
+			}
+		});
+
 	}
 
 	private void mock() {
@@ -97,6 +117,13 @@ public class HomeActivity extends AppCompatActivity
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+
+		((LanguageAdapter) languageListView.getAdapter()).setLanguages(new LanguageManager().selectAll());
+	}
+
+	@Override
 	public void onBackPressed() {
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -132,6 +159,7 @@ public class HomeActivity extends AppCompatActivity
 		int id = item.getItemId();
 
 		if (id == R.id.your_vocabuary) {
+
 			startActivity(new Intent(this, VocabularyActivity.class));
 		}
 

@@ -10,7 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="AA_DB_NAME"
             android:value="yourlanguage.db" />
@@ -30,12 +29,10 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".manage.EditWordActivity"
             android:label="@string/title_activity_edit_activity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.home.HomeActivity"
             android:label="@string/title_activity_home"
@@ -46,13 +43,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.vocabulary.VocabularyActivity"
             android:label="@string/title_activity_vocabulary"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        </activity>
+        <activity
+            android:name=".activity.language.NewLanguageActivity"
+            android:label="New language"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -95,7 +95,7 @@ public class LanguageFragment extends Fragment {
 								startActivity(intent);
 
 								break;
-							
+
 							case "Remove":
 								language.removeWord(word);
 
