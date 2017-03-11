@@ -18,7 +18,10 @@
             android:name="AA_DB_VERSION"
             android:value="0" />
 
-        <activity android:name=".activity.intent.ReceiveTextActivity">
+        <activity
+            android:name=".activity.intent.ReceiveTextActivity"
+            android:label="@string/title_activity_text_receiver"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 

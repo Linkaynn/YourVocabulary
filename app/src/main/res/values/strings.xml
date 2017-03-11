@@ -13,7 +13,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">YourVocabulary App</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -23,4 +23,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="word_table_header_left">WORD</string>
     <string name="word_table_header_right">TRANSLATION</string>
+    <string name="title_activity_text_receiver">New translation</string>
+    <string name="save">Save</string>
 </resources>
