@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 import java.util.ArrayList;
 
@@ -61,6 +60,20 @@ public class LanguageAdapter extends ArrayAdapter<Language> {
 	public void setLanguages(ArrayList<Language> languages) {
 		this.languages = languages;
 
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void remove(@Nullable Language object) {
+		languages.remove(object);
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void add(@Nullable Language object) {
+		if (!languages.contains(object)) {
+			languages.add(object);
+		}
 		notifyDataSetChanged();
 	}
 }

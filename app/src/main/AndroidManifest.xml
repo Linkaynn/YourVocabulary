@@ -49,7 +49,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".activity.language.NewLanguageActivity"
+            android:name=".activity.language.ManageLanguageActivity"
             android:label="New language"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

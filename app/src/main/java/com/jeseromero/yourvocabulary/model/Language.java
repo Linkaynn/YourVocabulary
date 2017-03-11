@@ -100,4 +100,8 @@ public class Language extends Model {
 	public String toString() {
 		return name;
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

@@ -1,7 +1,7 @@
 package com.jeseromero.yourvocabulary.activity.language;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,27 +10,38 @@ import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 import java.util.ArrayList;
 
-import static com.jeseromero.yourvocabulary.R.id.language;
+public class ManageLanguageActivity extends AppCompatActivity {
 
-public class NewLanguageActivity extends AppCompatActivity {
+	public static final String LANGUAGE_ID = "LANGUAGE_ID";
 
 	private EditText languageEditText;
+
+	private Language language;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_new_language);
+		setContentView(R.layout.activity_manage_language);
+
+		long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
+
+		if (languageID != -1) {
+			language = new LanguageManager().selectLanguage(languageID);
+		}
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 		setSupportActionBar(toolbar);
 
-		languageEditText = ((EditText) findViewById(language));
+		languageEditText = ((EditText) findViewById(R.id.language));
+
+		if (language != null) {
+			languageEditText.setText(language.getName());
+		}
 	}
 
 	@Override
@@ -43,7 +54,6 @@ public class NewLanguageActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_save:
-
 
 				String name = languageEditText.getText().toString();
 
@@ -67,11 +77,23 @@ public class NewLanguageActivity extends AppCompatActivity {
 					return false;
 				}
 
-				Language language = new Language(name);
+				String message;
+				if (language != null) {
+					language.setName(name);
 
-				language.saveAll();
+					language.save();
 
-				Toast.makeText(this, "Added new language: " + name + ".", Toast.LENGTH_SHORT).show();
+					message = language.getName() + " updted.";
+				} else {
+					Language language = new Language(name);
+
+					language.saveAll();
+
+					message = "Added new language: " + name + ".";
+				}
+
+
+				Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
 				finish();
 
