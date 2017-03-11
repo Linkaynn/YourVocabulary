@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
@@ -55,6 +56,8 @@ public class HomeActivity extends AppCompatActivity
 
 		setSupportActionBar(toolbar);
 
+		setTitle("Your languages");
+
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,16 +69,16 @@ public class HomeActivity extends AppCompatActivity
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
 
-		mock();
+//		mock();
 
 		languageListView = (ListView) findViewById(R.id.languages);
 
 		languageAdapter = new LanguageAdapter(new LanguageManager().selectAll(), this);
 		languageListView.setAdapter(languageAdapter);
 
-		languageListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		languageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Language language = (Language) view.getTag();
 
 				final Collection<Word> words = language.getWords();
@@ -139,7 +142,6 @@ public class HomeActivity extends AppCompatActivity
 					}
 				});
 
-				return false;
 			}
 		});
 
@@ -165,39 +167,39 @@ public class HomeActivity extends AppCompatActivity
 		deleteDatabase(aaName);
 		ActiveAndroid.initialize(this);
 
-		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
-			model.delete();
-		}
-
-		for (Model model : new Select().all().from(Word.class).execute()) {
-			model.delete();
-		}
-
-		for (Model model : new Select().all().from(Language.class).execute()) {
-			model.delete();
-		}
-
-		LanguageManager languageManager = new LanguageManager();
-
-		Language japanese = new Language("Japanese");
-
-		japanese.addWord(new Word("思い", "Pesado"));
-
-		languageManager.addLanguage(japanese);
-
-		Language english = new Language("English");
-
-		english.addWord(new Word("Weight", "Peso"));
-
-		languageManager.addLanguage(english);
-
-		for (Language language : new LanguageManager().selectAll()) {
-			System.out.println("LANGUAGE - " + language.getName());
-
-			for (Word word : language.getWords()) {
-				System.out.println("WORD - " + word.getValue());
-			}
-		}
+//		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
+//			model.delete();
+//		}
+//
+//		for (Model model : new Select().all().from(Word.class).execute()) {
+//			model.delete();
+//		}
+//
+//		for (Model model : new Select().all().from(Language.class).execute()) {
+//			model.delete();
+//		}
+//
+//		LanguageManager languageManager = new LanguageManager();
+//
+//		Language japanese = new Language("Japanese");
+//
+//		japanese.addWord(new Word("思い", "Pesado"));
+//
+//		languageManager.addLanguage(japanese);
+//
+//		Language english = new Language("English");
+//
+//		english.addWord(new Word("Weight", "Peso"));
+//
+//		languageManager.addLanguage(english);
+//
+//		for (Language language : new LanguageManager().selectAll()) {
+//			System.out.println("LANGUAGE - " + language.getName());
+//
+//			for (Word word : language.getWords()) {
+//				System.out.println("WORD - " + word.getValue());
+//			}
+//		}
 	}
 
 	@Override
@@ -244,7 +246,13 @@ public class HomeActivity extends AppCompatActivity
 
 		if (id == R.id.your_vocabuary) {
 
-			startActivity(new Intent(this, VocabularyActivity.class));
+			int size = new LanguageManager().selectAll().size();
+
+			if (size == 0) {
+				Toast.makeText(this, "Add new language first", Toast.LENGTH_SHORT).show();
+			} else {
+				startActivity(new Intent(this, VocabularyActivity.class));
+			}
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

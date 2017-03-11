@@ -71,9 +71,9 @@ public class LanguageFragment extends Fragment {
 
 		listView.setAdapter(wordAdapter);
 
-		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Word word = (Word) view.getTag();
 
 				System.out.println("WORD " + word.getValue());
@@ -124,8 +124,6 @@ public class LanguageFragment extends Fragment {
 						}
 					}
 				});
-
-				return false;
 			}
 		});
 
