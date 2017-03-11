@@ -59,4 +59,18 @@ public class WordAdapter extends ArrayAdapter<Word> {
 
 		return view;
 	}
+
+	@Override
+	public void remove(@Nullable Word object) {
+		words.remove(object);
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void add(@Nullable Word object) {
+		if (!words.contains(object)) {
+			words.add(object);
+		}
+		notifyDataSetChanged();
+	}
 }
