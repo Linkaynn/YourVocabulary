@@ -1,11 +1,18 @@
 package com.jeseromero.yourvocabulary.activity.play;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
@@ -16,12 +23,17 @@ import az.plainpie.PieView;
 public class LanguageStatisticActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
+	private Language language;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_language_statistic);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+		setSupportActionBar(toolbar);
 
 		long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
@@ -31,7 +43,7 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 			finish();
 		}
 
-		Language language = new LanguageManager().selectLanguage(languageID);
+		language = new LanguageManager().selectLanguage(languageID);
 
 		Statistic statistics = new StatisticsManager().getStatistics(language);
 
@@ -51,4 +63,33 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 
 		pieView.setPercentage(statistics.getPercentage());
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.play, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_play:
+
+				DialogBuilder.buildAlertDialog(this, "Repeat test", "Do you want to repeat the test?", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						Intent intent = new Intent(LanguageStatisticActivity.this, PlayActivity.class);
+
+						intent.putExtra(PlayActivity.LANGUAGE_ID, language.getId());
+
+						startActivity(intent);
+					}
+				});
+
+				break;
+		}
+
+		return true;
+	}
+
 }

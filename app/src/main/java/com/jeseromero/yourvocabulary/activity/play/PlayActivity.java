@@ -66,9 +66,7 @@ public class PlayActivity extends AppCompatActivity {
 
 		statistics = new StatisticsManager().getStatistics(language);
 
-		if (statistics == null) {
-			statistics = new Statistic();
-		}
+		statistics = new Statistic();
 
 		statistics.setLanguage(language);
 
@@ -112,7 +110,7 @@ public class PlayActivity extends AppCompatActivity {
 
 				pieView.setPercentage(statistics.getPercentage());
 
-				if (repetitions >= language.getWords().size() * 2) {
+				if (repetitions >= language.getWords().size() * 3) {
 					statistics.save();
 
 					Intent intent = new Intent(PlayActivity.this, LanguageStatisticActivity.class);
