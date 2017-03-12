@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jeseromero.yourvocabulary">
+          package="com.jeseromero.yourvocabulary">
 
     <application
         android:name="com.activeandroid.app.Application"
@@ -12,45 +12,44 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="yourlanguage.db" />
+            android:value="yourlanguage.db"/>
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="0" />
+            android:value="0"/>
 
         <activity
             android:name=".activity.intent.ReceiveTextActivity"
             android:label="@string/title_activity_text_receiver"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".manage.EditWordActivity"
             android:label="@string/title_activity_edit_activity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activity.home.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activity.vocabulary.VocabularyActivity"
             android:label="@string/title_activity_vocabulary"
-            android:theme="@style/AppTheme.NoActionBar" />
-
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activity.language.ManageLanguageActivity"
             android:label="New language"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.home.HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.language.LanguageActivity">
+        </activity>
     </application>
 
 </manifest>
