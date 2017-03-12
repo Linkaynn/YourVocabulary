@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
-import com.jeseromero.yourvocabulary.manage.adapter.LanguageAdapter;
+import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;

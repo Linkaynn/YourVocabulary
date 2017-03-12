@@ -107,6 +107,13 @@
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
             plainpie:percentage_size="40"/>
+
+        <ListView
+            android:layout_marginTop="30dp"
+            android:id="@+id/statistics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/statistic_item"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

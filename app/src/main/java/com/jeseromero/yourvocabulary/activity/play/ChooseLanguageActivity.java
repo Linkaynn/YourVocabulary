@@ -44,7 +44,7 @@ public class ChooseLanguageActivity extends AppCompatActivity {
 				public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 					final Language language = (Language) view.getTag();
 
-					Statistic statistic = new StatisticsManager().getStatistics(language);
+					Statistic statistic = new StatisticsManager().getStatistic(language);
 
 					if (statistic == null) {
 						DialogBuilder.buildAlertDialog(ChooseLanguageActivity.this, "New game",

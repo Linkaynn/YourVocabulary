@@ -1,9 +1,12 @@
 package com.jeseromero.yourvocabulary.persistence;
 
+import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,20 +15,28 @@ import java.util.List;
 
 public class StatisticsManager {
 
-	private final List<Statistic> statistics;
+	private final ArrayList<Statistic> statistics;
 
 	public StatisticsManager() {
-		statistics = new Select().all().from(Statistic.class).execute();
+
+		statistics = new ArrayList<>();
+
+		for (Model model : new Select().all().from(Statistic.class).orderBy("DATE DESC").execute()) {
+			statistics.add((Statistic) model);
+		}
 	}
 
-	public Statistic getStatistics(Language language) {
+	public ArrayList<Statistic> getStatistics() {
+		return statistics;
+	}
 
-		for (Statistic statistic : statistics) {
-			if (statistic.getLanguage().equals(language)) {
-				return statistic;
-			}
+	public Statistic getStatistic(Language language) {
+		List<Model> models = new Select().all().from(Statistic.class).where("LANGUAGE = '" + language.getId() + "'").orderBy("DATE DESC").limit(1).execute();
+
+		if (models.isEmpty()) {
+			return null;
 		}
 
-		return null;
+		return ((Statistic) models.get(0));
 	}
 }

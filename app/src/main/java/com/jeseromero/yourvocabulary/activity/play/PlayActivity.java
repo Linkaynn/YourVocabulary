@@ -19,6 +19,7 @@ import com.jeseromero.yourvocabulary.persistence.StatisticsManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 
 import az.plainpie.PieView;
@@ -64,7 +65,7 @@ public class PlayActivity extends AppCompatActivity {
 
 		language = new LanguageManager().selectLanguage(languageID);
 
-		statistics = new StatisticsManager().getStatistics(language);
+		statistics = new StatisticsManager().getStatistic(language);
 
 		statistics = new Statistic();
 
@@ -111,6 +112,8 @@ public class PlayActivity extends AppCompatActivity {
 				pieView.setPercentage(statistics.getPercentage());
 
 				if (repetitions >= language.getWords().size() * 3) {
+					statistics.setDate(new Date(System.currentTimeMillis()));
+
 					statistics.save();
 
 					Intent intent = new Intent(PlayActivity.this, LanguageStatisticActivity.class);

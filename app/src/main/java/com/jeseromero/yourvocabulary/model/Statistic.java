@@ -4,6 +4,8 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
+import java.util.Date;
+
 /**
  * Version 1.0
  */
@@ -14,6 +16,9 @@ public class Statistic extends Model {
 	@Column(name = "LANGUAGE", onDelete = Column.ForeignKeyAction.CASCADE)
 	private Language language;
 
+	@Column(name = "DATE")
+	private Date date;
+
 	@Column(name = "CORRECT_ANSWERS")
 	private float correctAnswers;
 
@@ -23,6 +28,7 @@ public class Statistic extends Model {
 	public Statistic() {
 		super();
 
+		date = new Date();
 		correctAnswers = 0;
 		tries = 0;
 	}
@@ -64,5 +70,13 @@ public class Statistic extends Model {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }
