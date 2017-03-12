@@ -11,6 +11,7 @@ import com.activeandroid.query.Select;
 import com.activeandroid.util.ReflectionUtils;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
+import com.jeseromero.yourvocabulary.activity.play.ChooseLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
@@ -27,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
 		View.OnClickListener playListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				//TODO
+				startActivity(new Intent(HomeActivity.this, ChooseLanguageActivity.class));
 			}
 		};
 

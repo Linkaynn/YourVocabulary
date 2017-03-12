@@ -174,11 +174,9 @@ public class LanguageDetailActivity extends AppCompatActivity {
 				break;
 			case R.id.action_delete:
 
-				new AlertDialog.Builder(LanguageDetailActivity.this)
-						.setIcon(R.drawable.warning)
-						.setTitle("Removing language")
-						.setMessage("Are you sure you want to remove " + language.getName() + " language? This action can't be undone.")
-						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				DialogBuilder.buildAlertDialog(LanguageDetailActivity.this, "Removing language",
+						"Are you sure you want to remove " + language.getName() + " language? This action can't be undone.",
+						new DialogInterface.OnClickListener()
 						{
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -192,9 +190,7 @@ public class LanguageDetailActivity extends AppCompatActivity {
 								finish();
 							}
 
-						})
-						.setNegativeButton("No", null)
-						.show();
+						});
 
 				break;
 		}
