@@ -18,7 +18,7 @@ public class Language extends Model {
 	@Column(name = "NAME", notNull = true)
 	private String name;
 
-	private Collection<Word> words;
+	private ArrayList<Word> words;
 
 	public Language(String name) {
 		super();
@@ -50,7 +50,7 @@ public class Language extends Model {
 
 	}
 
-	public Collection<Word> getWords() {
+	public ArrayList<Word> getWords() {
 		return words;
 	}
 

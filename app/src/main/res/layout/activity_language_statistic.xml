@@ -1,10 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.jeseromero.yourvocabulary.activity.play.LanguageStatisticActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LANGUAGE"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Correct answers"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/answers_count"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Answers count"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total words"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/words_count"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Words count"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <az.plainpie.PieView
+            android:id="@+id/pie"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            plainpie:inner_pie_padding="20"
+            plainpie:inner_text_visibility="true"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            plainpie:percentage_size="40"/>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
 		findViewById(R.id.vocabulary_image).setOnClickListener(vocabularyListener);
 		findViewById(R.id.vocabulary_text).setOnClickListener(vocabularyListener);
 
-		mock();
+//		mock();
 	}
 
 	private void mock() {
@@ -97,9 +97,9 @@ public class HomeActivity extends AppCompatActivity {
 
 		japanese.addWord(new Word("思い", "Pesado"));
 
-		japanese.addWord(new Word("こんにちは", "Buenas tardes"));
+		japanese.addWord(new Word("こんにちは, こんばんは", "Buenas tardes"));
 
-		japanese.addWord(new Word("こんばんは", "Buenas tardes"));
+		japanese.addWord(new Word("リストラン", "Restaurante"));
 
 		japanese.addWord(new Word("おはようございます", "Buenos días"));
 
