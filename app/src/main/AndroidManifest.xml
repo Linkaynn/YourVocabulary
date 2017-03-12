@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".manage.EditWordActivity"
+            android:name=".manage.ManageWordActivity"
             android:label="@string/title_activity_edit_activity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
@@ -50,7 +50,8 @@
         </activity>
         <activity android:name=".activity.language.LanguageActivity">
         </activity>
-        <activity android:name=".activity.language.LanguageDetailActivity">
+        <activity android:name=".activity.language.LanguageDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

@@ -20,15 +20,17 @@ import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
-public class EditWordActivity extends AppCompatActivity {
+public class ManageWordActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
 
 	public static final String WORD_ID = "WORD_ID";
 
+	public static final String EDIT_ACTION = "EDIT_ACTION";
+
 	private EditText translationEditText;
 
-	private TextView wordTextView;
+	private EditText valueEditText;
 
 	private TextView languageTextView;
 
@@ -40,25 +42,34 @@ public class EditWordActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_recieve_text);
+		setContentView(R.layout.activity_manage_word);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 		setSupportActionBar(toolbar);
 
-		retrieveData();
-
-		wordTextView = (TextView) findViewById(R.id.word);
-
-		wordTextView.setText(word.getValue());
+		valueEditText = (EditText) findViewById(R.id.word);
 
 		languageTextView = (TextView) findViewById(R.id.language);
 
-		languageTextView.setText(language.getName());
-
 		translationEditText = (EditText) findViewById(R.id.translate);
 
-		translationEditText.setText(word.getTranslation());
+		if (getIntent().getBooleanExtra(EDIT_ACTION, false)) {
+			retrieveData();
+
+			valueEditText.setText(word.getValue());
+
+			languageTextView.setText(language.getName());
+
+			translationEditText.setText(word.getTranslation());
+		} else {
+			long languageId = getIntent().getLongExtra(LANGUAGE_ID, -1);
+
+			if (languageId != -1) {
+				language = new LanguageManager().selectLanguage(languageId);
+				languageTextView.setText(language.getName());
+			}
+		}
 
 		ListView languagesList = (ListView) findViewById(R.id.languages);
 
@@ -126,7 +137,7 @@ public class EditWordActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.text_receiver, menu);
+		getMenuInflater().inflate(R.menu.save, menu);
 		return true;
 	}
 
@@ -135,25 +146,55 @@ public class EditWordActivity extends AppCompatActivity {
 		switch (item.getItemId()) {
 			case R.id.action_save:
 
-				String value = wordTextView.getText().toString();
+				String value = valueEditText.getText().toString();
 
 				String translation = translationEditText.getText().toString();
 
-				word.setValue(value);
+				boolean failed = false;
 
-				word.setTranslation(translation);
+				if (language != null) {
+					for (Word word : language.getWords()) {
+						if (word.getValue().equalsIgnoreCase(value) && word.getTranslation().equalsIgnoreCase(translation)) {
+							translationEditText.setError("Already exist this combination of value - translation");
+							failed = true;
+						}
+					}
+				} else {
+					Toast.makeText(this, "Select a language", Toast.LENGTH_SHORT).show();
 
-				language.addWord(word);
+					failed = true;
+				}
 
-				language.saveAll();
+				if (value.trim().isEmpty()) {
+					valueEditText.setError("Can't be empty");
+					failed = true;
+				}
 
-				new LanguageWord(language, word).save();
+				if (translation.trim().isEmpty()) {
+					translationEditText.setError("Can't be empty");
+					failed = true;
+				}
 
-				toast("Saved " + value + " as " + translation + " to " + language.getName() + " language.").show();
+				if (!failed) {
 
-				finish();
+					word = new Word();
 
-				return true;
+					word.setValue(value);
+
+					word.setTranslation(translation);
+
+					language.addWord(word);
+
+					language.saveAll();
+
+					toast("Saved " + value + " as " + translation + " to " + language.getName() + " language.").show();
+
+					finish();
+
+					return true;
+				} else {
+					return false;
+				}
 
 			default:
 				return super.onOptionsItemSelected(item);

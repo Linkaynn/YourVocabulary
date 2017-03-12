@@ -16,7 +16,7 @@ import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
-import com.jeseromero.yourvocabulary.manage.EditWordActivity;
+import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
@@ -81,10 +81,11 @@ public class VocabularyFragment extends Fragment {
 
 						switch (action.toString()) {
 							case "Edit":
-								Intent intent = new Intent(VocabularyFragment.this.getContext(), EditWordActivity.class);
+								Intent intent = new Intent(VocabularyFragment.this.getContext(), ManageWordActivity.class);
 
-								intent.putExtra(EditWordActivity.LANGUAGE_ID, language.getId());
-								intent.putExtra(EditWordActivity.WORD_ID, word.getId());
+								intent.putExtra(ManageWordActivity.EDIT_ACTION, true);
+								intent.putExtra(ManageWordActivity.LANGUAGE_ID, language.getId());
+								intent.putExtra(ManageWordActivity.WORD_ID, word.getId());
 
 								startActivity(intent);
 

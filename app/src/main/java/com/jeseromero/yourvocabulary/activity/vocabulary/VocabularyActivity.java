@@ -1,6 +1,8 @@
 package com.jeseromero.yourvocabulary.activity.vocabulary;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,9 +10,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
+import com.jeseromero.yourvocabulary.activity.language.ManageLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
+import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
@@ -38,6 +44,13 @@ public class VocabularyActivity extends AppCompatActivity {
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addWordButton);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(VocabularyActivity.this, ManageWordActivity.class));
+			}
+		});
 	}
 
 	@Override

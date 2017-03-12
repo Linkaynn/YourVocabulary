@@ -1,5 +1,6 @@
 package com.jeseromero.yourvocabulary.activity.language;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -124,13 +125,8 @@ public class LanguageActivity extends AppCompatActivity {
 			}
 		});
 
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addLanguageButton);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				startActivity(new Intent(LanguageActivity.this, ManageLanguageActivity.class));
-			}
-		});
+
+
 	}
 
 	@Override

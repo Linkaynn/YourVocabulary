@@ -46,7 +46,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.text_receiver, menu);
+		getMenuInflater().inflate(R.menu.save, menu);
 		return true;
 	}
 
@@ -83,7 +83,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 
 					language.save();
 
-					message = language.getName() + " updted.";
+					message = language.getName() + " updated.";
 				} else {
 					Language language = new Language(name);
 

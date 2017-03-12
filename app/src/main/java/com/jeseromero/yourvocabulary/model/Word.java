@@ -5,6 +5,8 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 
+import java.util.List;
+
 /**
  * Version 1.0
  */
@@ -57,7 +59,13 @@ public class Word extends Model {
 	}
 
 	public LanguageWord getRelation() {
-		return ((LanguageWord) new Select().all().from(LanguageWord.class).where("WORD = '" + getId() + "'").limit(1).execute().get(0));
+		List<Model> models = new Select().all().from(LanguageWord.class).where("WORD = '" + getId() + "'").limit(1).execute();
+
+		if (models.isEmpty()) {
+			return null;
+		}
+
+		return ((LanguageWord) models.get(0));
 	}
 
 	@Override

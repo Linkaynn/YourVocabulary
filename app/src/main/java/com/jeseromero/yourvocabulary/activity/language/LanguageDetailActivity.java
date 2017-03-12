@@ -1,10 +1,15 @@
 package com.jeseromero.yourvocabulary.activity.language;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -15,9 +20,8 @@ import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
-import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
-import com.jeseromero.yourvocabulary.manage.EditWordActivity;
+import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
@@ -36,13 +40,15 @@ public class LanguageDetailActivity extends AppCompatActivity {
 	private ListView listView;
 
 	private WordAdapter wordAdapter;
+	private Toolbar toolbar;
+	private TextView languageNameTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_language_detail);
 
-		long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
+		final long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 
 		if (languageID == -1) {
@@ -53,9 +59,15 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 		language = new LanguageManager().selectLanguage(languageID);
 
-		setTitle("Language - " + language.getName());
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-		((TextView) findViewById(R.id.language)).setText(language.getName());
+		toolbar.setTitle("Language - " + language.getName());
+
+		setSupportActionBar(toolbar);
+
+		languageNameTextView = (TextView) findViewById(R.id.language);
+
+		languageNameTextView.setText(language.getName());
 
 		listView = (ListView) findViewById(R.id.translations);
 
@@ -79,10 +91,11 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 						switch (action.toString()) {
 							case "Edit":
-								Intent intent = new Intent(LanguageDetailActivity.this, EditWordActivity.class);
+								Intent intent = new Intent(LanguageDetailActivity.this, ManageWordActivity.class);
 
-								intent.putExtra(EditWordActivity.LANGUAGE_ID, language.getId());
-								intent.putExtra(EditWordActivity.WORD_ID, word.getId());
+								intent.putExtra(ManageWordActivity.EDIT_ACTION, true);
+								intent.putExtra(ManageWordActivity.LANGUAGE_ID, language.getId());
+								intent.putExtra(ManageWordActivity.WORD_ID, word.getId());
 
 								startActivity(intent);
 
@@ -118,5 +131,75 @@ public class LanguageDetailActivity extends AppCompatActivity {
 				});
 			}
 		});
+
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addWordButton);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(LanguageDetailActivity.this, ManageWordActivity.class);
+
+				intent.putExtra(ManageWordActivity.LANGUAGE_ID, languageID);
+
+				startActivity(intent);
+			}
+		});
 	}
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		toolbar.setTitle("Language - " + language.getName());
+
+		languageNameTextView.setText(language.getName());
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.edit_delete, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_edit:
+				Intent intent = new Intent(LanguageDetailActivity.this, ManageLanguageActivity.class);
+
+				intent.putExtra(ManageLanguageActivity.LANGUAGE_ID, language.getId());
+
+				startActivity(intent);
+
+				break;
+			case R.id.action_delete:
+
+				new AlertDialog.Builder(LanguageDetailActivity.this)
+						.setIcon(R.drawable.warning)
+						.setTitle("Removing language")
+						.setMessage("Are you sure you want to remove " + language.getName() + " language? This action can't be undone.")
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								for (Word word : language.getWords()) {
+									word.getRelation().delete();
+									word.delete();
+								}
+
+								language.delete();
+
+								finish();
+							}
+
+						})
+						.setNegativeButton("No", null)
+						.show();
+
+				break;
+		}
+
+		return false;
+	}
+
 }

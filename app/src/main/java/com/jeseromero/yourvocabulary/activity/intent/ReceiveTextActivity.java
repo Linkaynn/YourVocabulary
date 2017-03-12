@@ -86,7 +86,7 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.text_receiver, menu);
+		getMenuInflater().inflate(R.menu.save, menu);
 		return true;
 	}
 
