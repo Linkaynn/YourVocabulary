@@ -1,8 +1,6 @@
 package com.jeseromero.yourvocabulary.activity.vocabulary;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,10 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.jeseromero.yourvocabulary.R;
-import com.jeseromero.yourvocabulary.activity.vocabulary.languages.LanguageFragment;
+import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
@@ -62,7 +59,7 @@ public class VocabularyActivity extends AppCompatActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return LanguageFragment.newInstance(languages.get(position));
+			return VocabularyFragment.newInstance(languages.get(position));
 		}
 
 		@Override

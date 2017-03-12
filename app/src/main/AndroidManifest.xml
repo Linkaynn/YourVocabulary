@@ -50,6 +50,8 @@
         </activity>
         <activity android:name=".activity.language.LanguageActivity">
         </activity>
+        <activity android:name=".activity.language.LanguageDetailActivity">
+        </activity>
     </application>
 
 </manifest>

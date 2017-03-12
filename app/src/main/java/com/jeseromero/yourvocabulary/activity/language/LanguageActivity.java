@@ -37,11 +37,25 @@ public class LanguageActivity extends AppCompatActivity {
 		languageListView = (ListView) findViewById(R.id.languages);
 
 		languageAdapter = new LanguageAdapter(new LanguageManager().selectAll(), this);
+
 		languageListView.setAdapter(languageAdapter);
 
 		languageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				Language language = (Language) view.getTag();
+
+				Intent intent = new Intent(LanguageActivity.this, LanguageDetailActivity.class);
+
+				intent.putExtra(LanguageDetailActivity.LANGUAGE_ID, language.getId());
+
+				startActivity(intent);
+			}
+		});
+
+		languageListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Language language = (Language) view.getTag();
 
 				final Collection<Word> words = language.getWords();
@@ -104,6 +118,8 @@ public class LanguageActivity extends AppCompatActivity {
 
 					}
 				});
+
+				return true;
 
 			}
 		});

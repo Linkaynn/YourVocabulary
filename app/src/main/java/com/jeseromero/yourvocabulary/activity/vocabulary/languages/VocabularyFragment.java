@@ -10,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
-import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
@@ -26,16 +24,14 @@ import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.xml.datatype.Duration;
-
-public class LanguageFragment extends Fragment {
+public class VocabularyFragment extends Fragment {
 
 	private static final String ARG_LANGUAGE_ID = "section_number";
 	private Language language;
 	private ListView listView;
 	private WordAdapter wordAdapter;
 
-	public LanguageFragment() {
+	public VocabularyFragment() {
 	}
 
 	/**
@@ -43,9 +39,9 @@ public class LanguageFragment extends Fragment {
 	 * number.
 	 * @param language
 	 */
-	public static LanguageFragment newInstance(Language language) {
+	public static VocabularyFragment newInstance(Language language) {
 
-		LanguageFragment fragment = new LanguageFragment();
+		VocabularyFragment fragment = new VocabularyFragment();
 
 		Bundle args = new Bundle();
 
@@ -76,18 +72,16 @@ public class LanguageFragment extends Fragment {
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Word word = (Word) view.getTag();
 
-				System.out.println("WORD " + word.getValue());
-
 				final CharSequence[] actions = {"Edit", "Remove"};
 
-				DialogBuilder.buildChooserDialog(LanguageFragment.this.getContext(), "Actions", actions, new DialogInterface.OnClickListener() {
+				DialogBuilder.buildChooserDialog(VocabularyFragment.this.getContext(), "Actions", actions, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int selection) {
 						CharSequence action = actions[selection];
 
 						switch (action.toString()) {
 							case "Edit":
-								Intent intent = new Intent(LanguageFragment.this.getContext(), EditWordActivity.class);
+								Intent intent = new Intent(VocabularyFragment.this.getContext(), EditWordActivity.class);
 
 								intent.putExtra(EditWordActivity.LANGUAGE_ID, language.getId());
 								intent.putExtra(EditWordActivity.WORD_ID, word.getId());
@@ -114,7 +108,7 @@ public class LanguageFragment extends Fragment {
 									}
 								};
 
-								SuperActivityToast.create(LanguageFragment.this.getContext(), new Style(), Style.TYPE_BUTTON)
+								SuperActivityToast.create(VocabularyFragment.this.getContext(), new Style(), Style.TYPE_BUTTON)
 										.setButtonText("UNDO")
 										.setOnButtonClickListener("undo_delete_word", null, onButtonClickListener)
 										.setText(word.getValue() + " deleted")
