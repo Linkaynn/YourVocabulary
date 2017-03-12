@@ -67,4 +67,16 @@ public class LanguageManager {
 
 		return null;
 	}
+
+	public ArrayList<Language> getLanguagesPlayables() {
+		ArrayList<Language> languages = new ArrayList<>();
+
+		for (Language language : selectAll()) {
+			if (language.getWords().size() >= 4) {
+				languages.add(language);
+			}
+		}
+
+		return languages;
+	}
 }

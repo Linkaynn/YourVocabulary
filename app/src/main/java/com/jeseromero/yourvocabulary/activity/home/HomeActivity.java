@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
@@ -18,6 +19,8 @@ import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
+import java.util.ArrayList;
+
 public class HomeActivity extends AppCompatActivity {
 
 	@Override
@@ -28,7 +31,13 @@ public class HomeActivity extends AppCompatActivity {
 		View.OnClickListener playListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				startActivity(new Intent(HomeActivity.this, ChooseLanguageActivity.class));
+				ArrayList<Language> languagesPlayables = new LanguageManager().getLanguagesPlayables();
+
+				if (!languagesPlayables.isEmpty()) {
+					startActivity(new Intent(HomeActivity.this, ChooseLanguageActivity.class));
+				} else {
+					Toast.makeText(HomeActivity.this, "You need a language with 4 or more words to play", Toast.LENGTH_LONG).show();
+				}
 			}
 		};
 
