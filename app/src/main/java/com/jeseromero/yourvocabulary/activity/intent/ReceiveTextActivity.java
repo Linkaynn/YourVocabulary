@@ -144,6 +144,13 @@ public class ReceiveTextActivity extends AppCompatActivity {
 	private void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 		if (sharedText != null) {
+
+			if (sharedText.matches("[@:#]")) {
+				Toast.makeText(this, "Shared text contains illegal characters like '@:#', remove it first", Toast.LENGTH_LONG).show();
+
+				finish();
+			}
+
 			wordTextView.setText(sharedText);
 		}
 	}
