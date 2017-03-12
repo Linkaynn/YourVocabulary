@@ -119,6 +119,22 @@ public class HomeActivity extends AppCompatActivity {
 
 		english.addWord(new Word("Water", "Agua"));
 
+		english.addWord(new Word("Paper clip", "Clip"));
+
+		english.addWord(new Word("File folder", "Carpeta de ficheros"));
+
+		english.addWord(new Word("Stapler", "Grapadora"));
+
+		english.addWord(new Word("Scissors", "Tijeras"));
+
+		english.addWord(new Word("Highlighter", "Subrayador"));
+
+		english.addWord(new Word("Whiteboard", "Pizarra blanca"));
+
+		english.addWord(new Word("Box", "Caja"));
+
+		english.addWord(new Word("Bottle", "Botella"));
+
 		languageManager.addLanguage(english);
 
 		for (Language language : new LanguageManager().selectAll()) {

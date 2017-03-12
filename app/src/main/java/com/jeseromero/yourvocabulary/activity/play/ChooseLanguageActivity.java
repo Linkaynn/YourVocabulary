@@ -28,7 +28,7 @@ public class ChooseLanguageActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_choose_language);
 
-		setTitle("Your languages");
+		setTitle("Play with your languages");
 
 		languageListView = (ListView) findViewById(R.id.languages);
 

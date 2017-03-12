@@ -39,4 +39,16 @@ public class StatisticsManager {
 
 		return ((Statistic) models.get(0));
 	}
+
+	public ArrayList<Statistic> getStatistics(Language language) {
+		ArrayList<Statistic> statistics = new ArrayList<>();
+
+		for (Statistic statistic : this.statistics) {
+			if (statistic.getLanguage().equals(language)) {
+				statistics.add(statistic);
+			}
+		}
+
+		return statistics;
+	}
 }

@@ -26,10 +26,17 @@ import az.plainpie.PieView;
 public class LanguageStatisticActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
+
+	public static final String PREVIOUS_ACTIVITY = "PREVIOUS_ACTIVITY";
+
 	private Language language;
+
 	private ListView statisticsListView;
+
 	private TextView wordsCount;
+
 	private PieView pieView;
+
 	private TextView correctAnswers;
 
 	@Override
@@ -52,6 +59,8 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 
 		language = new LanguageManager().selectLanguage(languageID);
 
+		toolbar.setTitle("Your statistic of " + language.getName());
+
 		Statistic statistics = new StatisticsManager().getStatistic(language);
 
 		TextView languageTextField = (TextView) findViewById(R.id.language);
@@ -62,7 +71,7 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 
 		statisticsListView = ((ListView) findViewById(R.id.statistics));
 
-		statisticsListView.setAdapter(new StatisticAdapter(this, new StatisticsManager().getStatistics()));
+		statisticsListView.setAdapter(new StatisticAdapter(this, new StatisticsManager().getStatistics(language)));
 
 		statisticsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override

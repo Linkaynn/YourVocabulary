@@ -65,6 +65,8 @@ public class PlayActivity extends AppCompatActivity {
 
 		language = new LanguageManager().selectLanguage(languageID);
 
+		setTitle("You can with this");
+
 		statistics = new StatisticsManager().getStatistic(language);
 
 		statistics = new Statistic();
@@ -111,7 +113,7 @@ public class PlayActivity extends AppCompatActivity {
 
 				pieView.setPercentage(statistics.getPercentage());
 
-				if (repetitions >= language.getWords().size() * 3) {
+				if (repetitions >= language.getWords().size() * 2) {
 					statistics.setDate(new Date(System.currentTimeMillis()));
 
 					statistics.save();
@@ -119,6 +121,7 @@ public class PlayActivity extends AppCompatActivity {
 					Intent intent = new Intent(PlayActivity.this, LanguageStatisticActivity.class);
 
 					intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
+					intent.putExtra(LanguageStatisticActivity.PREVIOUS_ACTIVITY, PlayActivity.class.getName());
 
 					startActivity(intent);
 				}
