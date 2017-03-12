@@ -16,6 +16,8 @@ import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
+import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
+import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
@@ -125,7 +127,13 @@ public class LanguageActivity extends AppCompatActivity {
 			}
 		});
 
-
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addLanguageButton);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(LanguageActivity.this, ManageLanguageActivity.class));
+			}
+		});
 
 	}
 

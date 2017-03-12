@@ -54,8 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:ems="10"
-                    android:hint="Translation"
-                    android:inputType="textCapWords" />
+                    android:hint="Word"/>
 
                 <EditText
                     android:id="@+id/translate"
@@ -63,8 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:ems="10"
-                    android:hint="Translation"
-                    android:inputType="textCapWords" />
+                    android:hint="Translation"/>
 
                 <ListView
                     android:id="@+id/languages"
