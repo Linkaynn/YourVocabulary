@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jeseromero.yourvocabulary.activity.play.PlayActivity">
+    tools:context="com.jeseromero.yourvocabulary.activity.play.ChooseWordPlayActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

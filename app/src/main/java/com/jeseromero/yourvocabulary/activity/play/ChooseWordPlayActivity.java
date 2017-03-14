@@ -24,7 +24,7 @@ import java.util.Random;
 
 import az.plainpie.PieView;
 
-public class PlayActivity extends AppCompatActivity {
+public class ChooseWordPlayActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
 
@@ -48,12 +48,12 @@ public class PlayActivity extends AppCompatActivity {
 
 	private Word lastWord;
 
-	private int repetitions = 0;
+	private ArrayList<Word> remainingWords;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_play);
+		setContentView(R.layout.activity_choose_word_play);
 
 		final long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
@@ -64,6 +64,12 @@ public class PlayActivity extends AppCompatActivity {
 		}
 
 		language = new LanguageManager().selectLanguage(languageID);
+
+		remainingWords = new ArrayList<>();
+
+		for (Word word : language.getWords()) {
+			remainingWords.add(word);
+		}
 
 		setTitle("You can with this");
 
@@ -85,46 +91,48 @@ public class PlayActivity extends AppCompatActivity {
 		final View.OnClickListener onClickListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				repetitions++;
 
 				Word word = (Word) view.getTag();
 
 				if (word.equals(rightWord)) {
 					statistics.newCorrectAnswer();
 
-					play();
+					remainingWords.remove(word);
 
 					answer1.setOnClickListener(this);
 					answer2.setOnClickListener(this);
 					answer3.setOnClickListener(this);
 					answer4.setOnClickListener(this);
 
-					answer1.setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.colorAccent));
-					answer2.setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.colorAccent));
-					answer3.setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.colorAccent));
-					answer4.setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.colorAccent));
+					answer1.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorAccent));
+					answer2.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorAccent));
+					answer3.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorAccent));
+					answer4.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorAccent));
+
+					if (remainingWords.isEmpty()) {
+						statistics.setDate(new Date(System.currentTimeMillis()));
+
+						statistics.save();
+
+						Intent intent = new Intent(ChooseWordPlayActivity.this, LanguageStatisticActivity.class);
+
+						intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
+
+						startActivity(intent);
+
+					} else {
+						play();
+					}
+
 				} else {
 					statistics.addTries();
 
-					view.setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.colorPrimaryDark));
+					view.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorPrimaryDark));
 
 					view.setOnClickListener(null);
 				}
 
 				pieView.setPercentage(statistics.getPercentage());
-
-				if (repetitions >= language.getWords().size() * 2) {
-					statistics.setDate(new Date(System.currentTimeMillis()));
-
-					statistics.save();
-
-					Intent intent = new Intent(PlayActivity.this, LanguageStatisticActivity.class);
-
-					intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
-					intent.putExtra(LanguageStatisticActivity.PREVIOUS_ACTIVITY, PlayActivity.class.getName());
-
-					startActivity(intent);
-				}
 			}
 		};
 
@@ -137,13 +145,12 @@ public class PlayActivity extends AppCompatActivity {
 
 		statistics.setTries(0);
 
-		pieView.setPercentage(1);
+		pieView.setPercentage(100);
 
 		lastWord = null;
 
 		play();
 
-		repetitions++;
 	}
 
 	private void play() {
@@ -157,14 +164,23 @@ public class PlayActivity extends AppCompatActivity {
 		Word word3 = words.get(random.nextInt(words.size()));
 		Word word4 = words.get(random.nextInt(words.size()));
 
+		rightWord = chooseRightWord(word1, word2, word3, word4);
+
 		if (someEquals(word1, word2, word3, word4)) {
 			play();
 			return;
 		}
 
-		rightWord = chooseRightWord(word1, word2, word3, word4);
+		boolean isRemaining = false;
 
-		if (rightWord == null) {
+		for (Word remainingWord : remainingWords) {
+			if (rightWord.equals(remainingWord)) {
+				isRemaining = true;
+				break;
+			}
+		}
+
+		if (!isRemaining) {
 			play();
 			return;
 		}

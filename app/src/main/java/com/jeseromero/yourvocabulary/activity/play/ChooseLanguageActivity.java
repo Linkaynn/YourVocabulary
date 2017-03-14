@@ -52,9 +52,9 @@ public class ChooseLanguageActivity extends AppCompatActivity {
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialogInterface, int i) {
-										Intent intent = new Intent(ChooseLanguageActivity.this, PlayActivity.class);
+										Intent intent = new Intent(ChooseLanguageActivity.this, ChooseWordPlayActivity.class);
 
-										intent.putExtra(PlayActivity.LANGUAGE_ID, language.getId());
+										intent.putExtra(ChooseWordPlayActivity.LANGUAGE_ID, language.getId());
 
 										startActivity(intent);
 									}

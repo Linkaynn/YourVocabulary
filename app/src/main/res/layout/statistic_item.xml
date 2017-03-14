@@ -2,19 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:plainpie="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:layout_marginTop="5dp"
               android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <LinearLayout
-                android:paddingRight="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingRight="10dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -58,40 +64,40 @@
         </LinearLayout>
 
 
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingTop="5dp"
-        android:gravity="center">
-
-        <az.plainpie.PieView
-            android:id="@+id/pie"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            plainpie:inner_pie_padding="5"
-            plainpie:inner_text_visibility="true"
-            plainpie:percentage="5"
-            plainpie:percentage_size="10"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/date"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="06/02/2017 17:50"
-            android:textAlignment="center"
-            android:textColor="@color/black"/>
+            android:gravity="center"
+            android:paddingTop="5dp">
 
+            <az.plainpie.PieView
+                android:id="@+id/pie"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                plainpie:inner_pie_padding="5"
+                plainpie:inner_text_visibility="true"
+                plainpie:percentage="5"
+                plainpie:percentage_size="10"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="06/02/2017 17:50"
+                android:textAlignment="center"
+                android:textColor="@color/black"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

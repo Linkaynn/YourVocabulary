@@ -52,7 +52,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Correct answers"
+                    android:text="Words"
                     android:textSize="20sp"
                     android:textAlignment="center"
                     android:textColor="@color/black"/>
@@ -78,7 +78,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total words"
+                    android:text="Tries"
                     android:textSize="20sp"
                     android:textAlignment="center"
                     android:textColor="@color/black"/>

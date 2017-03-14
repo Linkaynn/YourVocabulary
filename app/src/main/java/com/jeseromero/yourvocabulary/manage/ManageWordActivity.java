@@ -185,7 +185,9 @@ public class ManageWordActivity extends AppCompatActivity {
 
 					language.addWord(word);
 
-					language.saveAll();
+					word.save();
+
+					new LanguageWord(language, word).save();
 
 					toast("Saved " + value + " as " + translation + " to " + language.getName() + " language.").show();
 

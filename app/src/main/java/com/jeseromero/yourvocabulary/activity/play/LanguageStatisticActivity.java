@@ -1,5 +1,6 @@
 package com.jeseromero.yourvocabulary.activity.play;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,17 +28,7 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
 
-	public static final String PREVIOUS_ACTIVITY = "PREVIOUS_ACTIVITY";
-
 	private Language language;
-
-	private ListView statisticsListView;
-
-	private TextView wordsCount;
-
-	private PieView pieView;
-
-	private TextView correctAnswers;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +60,7 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 
 		setStatistics(statistics);
 
-		statisticsListView = ((ListView) findViewById(R.id.statistics));
+		ListView statisticsListView = ((ListView) findViewById(R.id.statistics));
 
 		statisticsListView.setAdapter(new StatisticAdapter(this, new StatisticsManager().getStatistics(language)));
 
@@ -84,15 +75,15 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 	}
 
 	private void setStatistics(Statistic statistics) {
-		correctAnswers = (TextView) findViewById(R.id.answers_count);
+		TextView correctAnswers = (TextView) findViewById(R.id.answers_count);
 
 		correctAnswers.setText(String.valueOf(Float.valueOf(statistics.getCorrectAnswers()).intValue()));
 
-		wordsCount = (TextView) findViewById(R.id.words_count);
+		TextView wordsCount = (TextView) findViewById(R.id.words_count);
 
 		wordsCount.setText(String.valueOf(Float.valueOf(statistics.getTries()).intValue()));
 
-		pieView = (PieView) findViewById(R.id.pie);
+		PieView pieView = (PieView) findViewById(R.id.pie);
 
 		pieView.setPercentage(statistics.getPercentage());
 	}
@@ -108,14 +99,31 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 		switch (item.getItemId()) {
 			case R.id.action_play:
 
-				DialogBuilder.buildAlertDialog(this, "Repeat test", "Do you want to start a new test?", new DialogInterface.OnClickListener() {
+				final CharSequence[] actions = {"Choose the word", "Write the word"};
+
+				DialogBuilder.buildChooserDialog(this, "Tests", actions, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-						Intent intent = new Intent(LanguageStatisticActivity.this, PlayActivity.class);
+						String action = actions[i].toString();
 
-						intent.putExtra(PlayActivity.LANGUAGE_ID, language.getId());
+						Intent intent;
 
-						startActivity(intent);
+						switch (action) {
+							case "Choose the word":
+								intent = new Intent(LanguageStatisticActivity.this, ChooseWordPlayActivity.class);
+
+								intent.putExtra(ChooseWordPlayActivity.LANGUAGE_ID, language.getId());
+
+								startActivity(intent);
+								break;
+							case "Write the word":
+								intent = new Intent(LanguageStatisticActivity.this, WriteWordPlayActivity.class);
+
+								intent.putExtra(WriteWordPlayActivity.LANGUAGE_ID, language.getId());
+
+								startActivity(intent);
+								break;
+						}
 					}
 				});
 
