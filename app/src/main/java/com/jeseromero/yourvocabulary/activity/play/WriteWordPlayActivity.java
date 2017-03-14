@@ -40,7 +40,10 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 	private Word lastWord;
 
 	private Word rightWord;
+
 	private EditText answerEditText;
+
+	private boolean aTranslation;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +86,15 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 			@Override
 			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
 
-				if (textView.getText().toString().equalsIgnoreCase(rightWord.getTranslation())) {
+				boolean success;
+
+				if (aTranslation) {
+					success = textView.getText().toString().equalsIgnoreCase(rightWord.getTranslation());
+				} else {
+					success = textView.getText().toString().equalsIgnoreCase(rightWord.getValue());
+				}
+
+				if (success) {
 					statistics.newCorrectAnswer();
 
 					remainingWords.remove(rightWord);
@@ -132,6 +143,8 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		Random random = new Random();
 
+		aTranslation = random.nextBoolean();
+
 		rightWord = remainingWords.get(random.nextInt(remainingWords.size()));
 
 		if (lastWord == null) {
@@ -143,6 +156,10 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		lastWord = rightWord;
 
-		wordTextView.setText(rightWord.getValue());
+		if (aTranslation) {
+			wordTextView.setText(rightWord.getValue());
+		} else {
+			wordTextView.setText(rightWord.getTranslation());
+		}
 	}
 }
