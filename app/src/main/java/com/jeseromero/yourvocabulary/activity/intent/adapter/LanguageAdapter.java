@@ -34,7 +34,7 @@ public class LanguageAdapter extends ArrayAdapter<Language> {
 
 	@Override
 	public long getItemId(int i) {
-		return languages.get(i).getId();
+		return languages.get(i).hashCode();
 	}
 
 	@NonNull

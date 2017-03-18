@@ -3,7 +3,9 @@ package com.jeseromero.yourvocabulary.activity.util;
 import android.content.Context;
 import android.os.Environment;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -46,5 +48,24 @@ public class StorageHelper {
 			return true;
 		}
 		return false;
+	}
+
+	public static String readFile(String fileName) throws IOException {
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+		String line;
+
+		while ((line = reader.readLine()) != null) {
+
+			stringBuilder.append(line);
+			stringBuilder.append('\n');
+		}
+
+		reader.close();
+
+		return stringBuilder.toString();
 	}
 }

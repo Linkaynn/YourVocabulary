@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.IntentHelper;
-import com.jeseromero.yourvocabulary.activity.util.JSONBuilder;
+import com.jeseromero.yourvocabulary.activity.util.JSONHelper;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
@@ -21,11 +21,14 @@ import java.util.ArrayList;
 public class MainShareActivity extends AppCompatActivity {
 
 	public static final int SHARE_VOCABULARY_REQUEST_CODE = 1;
+	private LanguageManager languageManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_share);
+
+		languageManager = new LanguageManager();
 
 		View.OnClickListener appListener = new View.OnClickListener() {
 			@Override
@@ -37,12 +40,16 @@ public class MainShareActivity extends AppCompatActivity {
 		View.OnClickListener vocabularyListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				int permissionCheck = ContextCompat.checkSelfPermission(MainShareActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+				if (!languageManager.selectAll().isEmpty()) {
+					int permissionCheck = ContextCompat.checkSelfPermission(MainShareActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-				if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-					ActivityCompat.requestPermissions(MainShareActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, SHARE_VOCABULARY_REQUEST_CODE);
+					if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+						ActivityCompat.requestPermissions(MainShareActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, SHARE_VOCABULARY_REQUEST_CODE);
+					} else {
+						shareAllVocabulary();
+					}
 				} else {
-					shareAllVocabulary();
+					Toast.makeText(MainShareActivity.this, "Add a language with vocabulary first", Toast.LENGTH_SHORT).show();
 				}
 			}
 		};
@@ -67,10 +74,10 @@ public class MainShareActivity extends AppCompatActivity {
 	}
 
 	private void shareAllVocabulary() {
-		ArrayList<Language> languages = new LanguageManager().selectAll();
+		ArrayList<Language> languages = languageManager.selectAll();
 
 		try {
-			startActivity(IntentHelper.createShareFileIntent(new JSONBuilder(this).toFile(languages, "Vocabulary"), "Share your vocabulary"));
+			startActivity(IntentHelper.createShareFileIntent(new JSONHelper(this).toFile(languages, "Vocabulary"), "Share your vocabulary"));
 		} catch (IOException e) {
 			Toast.makeText(MainShareActivity.this, "Can't create your vocabulary file to share it", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();

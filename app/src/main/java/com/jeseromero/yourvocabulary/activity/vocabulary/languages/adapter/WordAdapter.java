@@ -34,7 +34,7 @@ public class WordAdapter extends ArrayAdapter<Word> {
 
 	@Override
 	public long getItemId(int i) {
-		return words.get(i).getId();
+		return words.get(i).hashCode();
 	}
 
 	@NonNull

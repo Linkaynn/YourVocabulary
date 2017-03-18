@@ -79,4 +79,14 @@ public class LanguageManager {
 
 		return languages;
 	}
+
+	public Language getLanguageByName(String name) {
+		for (Language language : languages) {
+			if (language.getName().equalsIgnoreCase(name)) {
+				return language;
+			}
+		}
+
+		return null;
+	}
 }

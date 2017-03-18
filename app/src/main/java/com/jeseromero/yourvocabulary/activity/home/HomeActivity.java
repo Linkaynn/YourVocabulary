@@ -75,20 +75,13 @@ public class HomeActivity extends AppCompatActivity {
 		findViewById(R.id.share_image).setOnClickListener(shareListener);
 		findViewById(R.id.share_text).setOnClickListener(shareListener);
 
-		mock();
+//		mock();
+
+//		deleteDatabase();
 	}
 
 	private void mock() {
-		ActiveAndroid.dispose();
-
-		String aaName = ReflectionUtils.getMetaData(getApplicationContext(), "AA_DB_NAME");
-
-		if (aaName == null) {
-			aaName = "yourvocabulary.db";
-		}
-
-		deleteDatabase(aaName);
-		ActiveAndroid.initialize(this);
+		deleteDatabase();
 
 		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
 			model.delete();
@@ -155,5 +148,18 @@ public class HomeActivity extends AppCompatActivity {
 				System.out.println("WORD - " + word.getValue());
 			}
 		}
+	}
+
+	private void deleteDatabase() {
+		ActiveAndroid.dispose();
+
+		String aaName = ReflectionUtils.getMetaData(getApplicationContext(), "AA_DB_NAME");
+
+		if (aaName == null) {
+			aaName = "yourvocabulary.db";
+		}
+
+		deleteDatabase(aaName);
+		ActiveAndroid.initialize(this);
 	}
 }

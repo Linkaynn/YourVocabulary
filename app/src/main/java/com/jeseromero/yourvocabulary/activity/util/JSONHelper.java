@@ -16,17 +16,18 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Version 1.0
  */
 
-public class JSONBuilder {
+public class JSONHelper {
 
 	private final Gson gson;
 	private Context context;
 
-	public JSONBuilder(Context context) {
+	public JSONHelper(Context context) {
 		this.context = context;
 
 		this.gson = new GsonBuilder()
@@ -48,11 +49,11 @@ public class JSONBuilder {
 	}
 
 	public String toJSON(Object o) {
-		return gson.toJson(new LanguageManager().selectAll());
+		return gson.toJson(o);
 	}
 
 	public File toFile(Object o, String fileName) throws IOException {
-		File file = new StorageHelper(context).createFile(String.format("%s.yvo", fileName));
+		File file = new StorageHelper(context).createFile(String.format("%s.txt", fileName));
 
 		FileOutputStream fOut = new FileOutputStream(file);
 
@@ -67,14 +68,10 @@ public class JSONBuilder {
 		return file;
 	}
 
-	public ArrayList<Language> fromJSON(String json) {
-		Language[] languagesArray = gson.fromJson(json, Language[].class);
-
+	public ArrayList<Language> fromLanguageArray(String json) {
 		ArrayList<Language> languages = new ArrayList<>();
 
-		for (Language language : languagesArray) {
-			languages.add(language);
-		}
+		Collections.addAll(languages, gson.fromJson(json, Language[].class));
 
 		return languages;
 	}

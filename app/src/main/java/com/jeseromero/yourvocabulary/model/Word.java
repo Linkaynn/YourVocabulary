@@ -51,11 +51,9 @@ public class Word extends Model {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-
 		Word word = (Word) o;
 
-		return getId().equals(word.getId()) && value.equals(word.value) && translation.equals(word.translation);
+		return (getId() != null && getId().equals(word.getId())) || (translation != null && translation.equals(word.translation));
 	}
 
 	public LanguageWord getRelation() {
