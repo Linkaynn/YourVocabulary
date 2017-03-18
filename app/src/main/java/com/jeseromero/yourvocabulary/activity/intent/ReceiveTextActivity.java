@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -144,6 +145,8 @@ public class ReceiveTextActivity extends AppCompatActivity {
 	private void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 		if (sharedText != null) {
+
+			Log.d("YOUR_VOCABULARY", "RECEIVED TEXT: " + sharedText);
 
 			if (sharedText.matches(".*[@:#].*")) {
 				Toast.makeText(this, "Shared text contains illegal characters like '@:#', remove it first", Toast.LENGTH_LONG).show();

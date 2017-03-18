@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
 		findViewById(R.id.share_image).setOnClickListener(shareListener);
 		findViewById(R.id.share_text).setOnClickListener(shareListener);
 
-//		mock();
+		mock();
 	}
 
 	private void mock() {
