@@ -13,6 +13,7 @@ import com.activeandroid.util.ReflectionUtils;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
 import com.jeseromero.yourvocabulary.activity.play.ChooseLanguageActivity;
+import com.jeseromero.yourvocabulary.activity.share.MainShareActivity;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
@@ -55,6 +56,13 @@ public class HomeActivity extends AppCompatActivity {
 			}
 		};
 
+		View.OnClickListener shareListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(HomeActivity.this, MainShareActivity.class));
+			}
+		};
+
 		findViewById(R.id.play_image).setOnClickListener(playListener);
 		findViewById(R.id.play_text).setOnClickListener(playListener);
 
@@ -63,6 +71,9 @@ public class HomeActivity extends AppCompatActivity {
 
 		findViewById(R.id.vocabulary_image).setOnClickListener(vocabularyListener);
 		findViewById(R.id.vocabulary_text).setOnClickListener(vocabularyListener);
+
+		findViewById(R.id.share_image).setOnClickListener(shareListener);
+		findViewById(R.id.share_text).setOnClickListener(shareListener);
 
 //		mock();
 	}

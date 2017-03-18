@@ -13,10 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.jeseromero.yourvocabulary.R;
-import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
-import com.jeseromero.yourvocabulary.activity.language.ManageLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
-import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
+import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 

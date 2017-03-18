@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +25,6 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
 
-	private Language language;
-
 	private ArrayList<Word> remainingWords;
 
 	private Statistic statistics;
@@ -40,10 +36,6 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 	private Word lastWord;
 
 	private Word rightWord;
-
-	private EditText answerEditText;
-
-	private boolean aTranslation;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +50,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 			finish();
 		}
 
-		language = new LanguageManager().selectLanguage(languageID);
+		Language language = new LanguageManager().selectLanguage(languageID);
 
 		remainingWords = new ArrayList<>();
 
@@ -78,7 +70,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		wordTextView = (TextView) findViewById(R.id.word);
 
-		answerEditText = (EditText) findViewById(R.id.answer);
+		EditText answerEditText = (EditText) findViewById(R.id.answer);
 
 		answerEditText.setImeActionLabel("Check it!", KeyEvent.KEYCODE_ENTER);
 
@@ -86,15 +78,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 			@Override
 			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
 
-				boolean success;
-
-				if (aTranslation) {
-					success = textView.getText().toString().equalsIgnoreCase(rightWord.getTranslation());
-				} else {
-					success = textView.getText().toString().equalsIgnoreCase(rightWord.getValue());
-				}
-
-				if (success) {
+				if (textView.getText().toString().equalsIgnoreCase(rightWord.getTranslation())) {
 					statistics.newCorrectAnswer();
 
 					remainingWords.remove(rightWord);
@@ -143,8 +127,6 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		Random random = new Random();
 
-		aTranslation = random.nextBoolean();
-
 		rightWord = remainingWords.get(random.nextInt(remainingWords.size()));
 
 		if (lastWord == null) {
@@ -156,10 +138,6 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		lastWord = rightWord;
 
-		if (aTranslation) {
-			wordTextView.setText(rightWord.getValue());
-		} else {
-			wordTextView.setText(rightWord.getTranslation());
-		}
+		wordTextView.setText(rightWord.getValue());
 	}
 }

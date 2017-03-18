@@ -1,6 +1,5 @@
 package com.jeseromero.yourvocabulary.activity.language;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcelable;
@@ -21,7 +20,7 @@ import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
-import com.jeseromero.yourvocabulary.manage.ManageWordActivity;
+import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 import com.jeseromero.yourvocabulary.persistence.LanguageManager;

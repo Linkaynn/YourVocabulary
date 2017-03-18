@@ -1,4 +1,4 @@
-package com.jeseromero.yourvocabulary.manage;
+package com.jeseromero.yourvocabulary.activity.word.manage;
 
 import android.content.Intent;
 import android.os.Bundle;
