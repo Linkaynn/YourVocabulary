@@ -64,6 +64,30 @@
                     android:ems="10"
                     android:hint="Translation"/>
 
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/suggest_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Suggestion: "
+                        android:visibility="visible"/>
+
+                    <TextView
+                        android:id="@+id/suggest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hola"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
                 <ListView
                     android:id="@+id/languages"
                     android:layout_width="match_parent"

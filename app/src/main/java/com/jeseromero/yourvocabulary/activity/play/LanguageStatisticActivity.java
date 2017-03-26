@@ -1,6 +1,5 @@
 package com.jeseromero.yourvocabulary.activity.play;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +18,8 @@ import com.jeseromero.yourvocabulary.activity.play.adapter.StatisticAdapter;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
-import com.jeseromero.yourvocabulary.persistence.StatisticsManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 
 import az.plainpie.PieView;
 
@@ -43,12 +42,12 @@ public class LanguageStatisticActivity extends AppCompatActivity {
 		long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 		if (languageID == -1) {
-			Toast.makeText(this, "Language not found", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "An error occurred.", Toast.LENGTH_SHORT).show();
 
 			finish();
 		}
 
-		language = new LanguageManager().selectLanguage(languageID);
+		language = new LanguageManager().getLanguage(languageID);
 
 		toolbar.setTitle("Your statistic of " + language.getName());
 

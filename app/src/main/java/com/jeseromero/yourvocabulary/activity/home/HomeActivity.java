@@ -1,8 +1,11 @@
 package com.jeseromero.yourvocabulary.activity.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -10,17 +13,25 @@ import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.activeandroid.util.ReflectionUtils;
+import com.crashlytics.android.Crashlytics;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
+import com.jeseromero.yourvocabulary.activity.language.ManageLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.play.ChooseLanguageActivity;
 import com.jeseromero.yourvocabulary.activity.share.MainShareActivity;
+import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
+import com.jeseromero.yourvocabulary.manager.ChangeLogManager;
+import com.jeseromero.yourvocabulary.manager.Key;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.SharedPreferencesManager;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 import java.util.ArrayList;
+
+import io.fabric.sdk.android.Fabric;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -29,12 +40,46 @@ public class HomeActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
+		SharedPreferencesManager.init(this);
+		Fabric.with(this, new Crashlytics());
+
+		if (SharedPreferencesManager.getBoolean(Key.RECENTLY_INSTALLED)) {
+			SharedPreferencesManager.putBoolean(Key.RECENTLY_INSTALLED, false);
+			SharedPreferencesManager.putInt(Key.LAST_CHANGELOG, ChangeLogManager.getLastVersion());
+		} else {
+			int lastChangelog = SharedPreferencesManager.getInt(Key.LAST_CHANGELOG);
+
+			int versionCode = -1;
+			String versionName = null;
+
+			try {
+				PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+				versionCode = packageInfo.versionCode;
+				versionName = packageInfo.versionName;
+			} catch (PackageManager.NameNotFoundException e) {
+				Crashlytics.logException(e);
+				e.printStackTrace();
+			}
+
+//			DialogBuilder.buildInfoDialog(this, "Version " + versionName, ChangeLogManager.getChangeLog(versionCode));
+
+			if ((lastChangelog == -1 || lastChangelog < versionCode) && versionCode != -1 && versionName != null) {
+				String changeLog = ChangeLogManager.getChangeLog(versionCode);
+
+				if (changeLog != null) {
+					DialogBuilder.buildInfoDialog(this, "Version " + versionName, changeLog);
+					SharedPreferencesManager.putInt(Key.LAST_CHANGELOG, versionCode);
+				}
+
+			}
+		}
+
 		View.OnClickListener playListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				ArrayList<Language> languagesPlayables = new LanguageManager().getLanguagesPlayables();
+				ArrayList<Language> languagesPlayable = new LanguageManager().getLanguagesPlayable();
 
-				if (!languagesPlayables.isEmpty()) {
+				if (!languagesPlayable.isEmpty()) {
 					startActivity(new Intent(HomeActivity.this, ChooseLanguageActivity.class));
 				} else {
 					Toast.makeText(HomeActivity.this, "You need a language with 4 or more words to play", Toast.LENGTH_LONG).show();
@@ -52,7 +97,18 @@ public class HomeActivity extends AppCompatActivity {
 		View.OnClickListener vocabularyListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				startActivity(new Intent(HomeActivity.this, VocabularyActivity.class));
+				DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						startActivity(new Intent(HomeActivity.this, ManageLanguageActivity.class));
+					}
+				};
+
+				if (LanguageManager.getLanguageCount() != 0) {
+					startActivity(new Intent(HomeActivity.this, VocabularyActivity.class));
+				} else {
+					DialogBuilder.buildWarningDialogWithoutIcon(HomeActivity.this, "You need a language", "No language detected. Do you want to create one?", yesListener, null);
+				}
 			}
 		};
 
@@ -95,8 +151,6 @@ public class HomeActivity extends AppCompatActivity {
 			model.delete();
 		}
 
-		LanguageManager languageManager = new LanguageManager();
-
 		Language japanese = new Language("Japanese");
 
 		japanese.addWord(new Word("思い", "Pesado"));
@@ -108,8 +162,6 @@ public class HomeActivity extends AppCompatActivity {
 		japanese.addWord(new Word("おはようございます", "Buenos días"));
 
 		japanese.addWord(new Word("おやすみなさい", "Buenas noches (Despedirse)"));
-
-		languageManager.addLanguage(japanese);
 
 		Language english = new Language("English");
 
@@ -139,9 +191,11 @@ public class HomeActivity extends AppCompatActivity {
 
 		english.addWord(new Word("Bottle", "Botella"));
 
-		languageManager.addLanguage(english);
+		japanese.saveAll();
 
-		for (Language language : new LanguageManager().selectAll()) {
+		english.saveAll();
+
+		for (Language language : new LanguageManager().getAllLanguages()) {
 			System.out.println("LANGUAGE - " + language.getName());
 
 			for (Word word : language.getWords()) {

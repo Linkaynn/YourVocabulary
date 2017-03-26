@@ -22,8 +22,9 @@ import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
 import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
+import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,12 +52,12 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 
 		if (languageID == -1) {
-			Toast.makeText(this, "No language found", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "An error ocurred.", Toast.LENGTH_SHORT).show();
 
 			finish();
 		}
 
-		language = new LanguageManager().selectLanguage(languageID);
+		language = new LanguageManager().getLanguage(languageID);
 
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -101,9 +102,11 @@ public class LanguageDetailActivity extends AppCompatActivity {
 								break;
 
 							case "Remove":
+								word.getRelation().delete();
+
 								language.removeWord(word);
 
-								language.saveAll();
+								word.delete();
 
 								wordAdapter.remove(word);
 
@@ -112,7 +115,7 @@ public class LanguageDetailActivity extends AppCompatActivity {
 									public void onClick(View view, Parcelable token) {
 										language.addWord(word);
 
-										language.saveAll();
+										new LanguageWord(language, word).save();
 
 										wordAdapter.add(word);
 									}
@@ -172,8 +175,7 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 				break;
 			case R.id.action_delete:
-
-				DialogBuilder.buildAlertDialog(LanguageDetailActivity.this, "Removing language",
+				DialogBuilder.buildWarningDialog(LanguageDetailActivity.this, "Removing language",
 						"Are you sure you want to remove " + language.getName() + " language? This action can't be undone.",
 						new DialogInterface.OnClickListener()
 						{
@@ -190,7 +192,6 @@ public class LanguageDetailActivity extends AppCompatActivity {
 							}
 
 						});
-
 				break;
 		}
 

@@ -19,7 +19,7 @@ import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordA
 import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class VocabularyFragment extends Fragment {
 
 		listView = (ListView) rootView.findViewById(R.id.translations);
 
-		language = new LanguageManager().selectLanguage(getArguments().getLong(ARG_LANGUAGE_ID));
+		language = new LanguageManager().getLanguage(getArguments().getLong(ARG_LANGUAGE_ID));
 
 		final Collection<Word> words = language.getWords();
 

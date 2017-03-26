@@ -17,7 +17,7 @@ import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.Collection;
 
@@ -36,7 +36,7 @@ public class LanguageActivity extends AppCompatActivity {
 
 		languageListView = (ListView) findViewById(R.id.languages);
 
-		languageAdapter = new LanguageAdapter(new LanguageManager().selectAll(), this);
+		languageAdapter = new LanguageAdapter(new LanguageManager().getAllLanguages(), this);
 
 		languageListView.setAdapter(languageAdapter);
 
@@ -138,6 +138,6 @@ public class LanguageActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 
-		languageAdapter.setLanguages(new LanguageManager().selectAll());
+		languageAdapter.setLanguages(new LanguageManager().getAllLanguages());
 	}
 }

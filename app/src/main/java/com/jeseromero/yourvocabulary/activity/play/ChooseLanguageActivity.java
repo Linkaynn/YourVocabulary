@@ -13,8 +13,8 @@ import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
-import com.jeseromero.yourvocabulary.persistence.StatisticsManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 
 import java.util.ArrayList;
 
@@ -32,7 +32,7 @@ public class ChooseLanguageActivity extends AppCompatActivity {
 
 		languageListView = (ListView) findViewById(R.id.languages);
 
-		ArrayList<Language> languages = new LanguageManager().getLanguagesPlayables();
+		ArrayList<Language> languages = new LanguageManager().getLanguagesPlayable();
 
 		if (!languages.isEmpty()) {
 			languageAdapter = new LanguageAdapter(languages, this);
@@ -47,7 +47,7 @@ public class ChooseLanguageActivity extends AppCompatActivity {
 					Statistic statistic = new StatisticsManager().getStatistic(language);
 
 					if (statistic == null) {
-						DialogBuilder.buildAlertDialog(ChooseLanguageActivity.this, "New game",
+						DialogBuilder.buildWarningDialog(ChooseLanguageActivity.this, "New game",
 								"Do you want to play first time with " + language.getName() + " ?",
 								new DialogInterface.OnClickListener() {
 									@Override

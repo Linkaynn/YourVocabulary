@@ -1,21 +1,25 @@
 package com.jeseromero.yourvocabulary.activity.play;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
-import com.jeseromero.yourvocabulary.persistence.StatisticsManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
@@ -29,13 +33,16 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 	private Statistic statistics;
 
-	private PieView pieView;
+	private PieView performancePie;
 
 	private TextView wordTextView;
 
 	private Word lastWord;
 
 	private Word rightWord;
+
+	private PieView progressPie;
+	private TextView hintTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +57,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 			finish();
 		}
 
-		Language language = new LanguageManager().selectLanguage(languageID);
+		final Language language = new LanguageManager().getLanguage(languageID);
 
 		remainingWords = new ArrayList<>();
 
@@ -66,9 +73,29 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		statistics.setLanguage(language);
 
-		pieView = (PieView) findViewById(R.id.pie);
+		performancePie = (PieView) findViewById(R.id.pie);
+		progressPie = (PieView) findViewById(R.id.progress);
 
 		wordTextView = (TextView) findViewById(R.id.word);
+		hintTextView = (TextView) findViewById(R.id.hint);
+
+		wordTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				DialogBuilder.buildWarningDialog(WriteWordPlayActivity.this, "Hint!", "Do you want a hint?\nThis action will increase you number of tries.", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						hintTextView.setVisibility(View.VISIBLE);
+
+						hintTextView.setText(generateHint());
+
+						statistics.addTry();
+
+						performancePie.setPercentage(statistics.getPercentage());
+					}
+				});
+			}
+		});
 
 		EditText answerEditText = (EditText) findViewById(R.id.answer);
 
@@ -78,35 +105,49 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 			@Override
 			public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
 
-				if (textView.getText().toString().equalsIgnoreCase(rightWord.getTranslation())) {
-					statistics.newCorrectAnswer();
+				String answer = textView.getText().toString();
 
-					remainingWords.remove(rightWord);
+				if (!answer.trim().isEmpty()) {
+					if (answer.equalsIgnoreCase(rightWord.getValue())) {
+						statistics.newCorrectAnswer();
 
-					textView.setText(null);
+						remainingWords.remove(rightWord);
 
-					if (remainingWords.isEmpty()) {
-						statistics.setDate(new Date(System.currentTimeMillis()));
+						textView.setText(null);
 
-						statistics.save();
+						hintTextView.setVisibility(View.GONE);
 
-						Intent intent = new Intent(WriteWordPlayActivity.this, LanguageStatisticActivity.class);
+						if (remainingWords.isEmpty()) {
+							statistics.setDate(new Date(System.currentTimeMillis()));
 
-						intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
+							statistics.save();
 
-						startActivity(intent);
+							Intent intent = new Intent(WriteWordPlayActivity.this, LanguageStatisticActivity.class);
+
+							intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
+
+							startActivity(intent);
+
+						} else {
+							play();
+						}
 
 					} else {
-						play();
+						statistics.addTry();
+
+						textView.setText(null);
+
+						for (Word word : language.getWords()) {
+							if (answer.equalsIgnoreCase(word.getValue())) {
+								Toast.makeText(WriteWordPlayActivity.this, answer + " means " + word.getTranslation(), Toast.LENGTH_LONG).show();
+							}
+						}
 					}
 
-				} else {
-					statistics.addTries();
+					performancePie.setPercentage(statistics.getPercentage());
 
-					textView.setText(null);
+					progressPie.setPercentage(statistics.getPercentageOfTotal());
 				}
-
-				pieView.setPercentage(statistics.getPercentage());
 
 				return true;
 			}
@@ -116,7 +157,9 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		statistics.setTries(0);
 
-		pieView.setPercentage(100);
+		performancePie.setPercentage(100);
+
+		progressPie.setPercentage(1);
 
 		lastWord = null;
 
@@ -138,6 +181,22 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 		lastWord = rightWord;
 
-		wordTextView.setText(rightWord.getValue());
+		wordTextView.setText(rightWord.getTranslation());
+	}
+
+	private String generateHint() {
+		char[] rightWordChars = rightWord.getValue().toCharArray();
+
+		Random random = new Random();
+
+		rightWordChars[0] = '_';
+
+		for (int i = 2; i < rightWordChars.length; i++) {
+			if (random.nextBoolean()) {
+				rightWordChars[i] = '_';
+			}
+		}
+
+		return Arrays.toString(rightWordChars).replace("[", "").replace("]", "").replace(", ", "");
 	}
 }

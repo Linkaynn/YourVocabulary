@@ -54,7 +54,7 @@ public class Statistic extends Model {
 		return tries;
 	}
 
-	public void addTries() {
+	public void addTry() {
 		tries++;
 	}
 
@@ -78,5 +78,13 @@ public class Statistic extends Model {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public float getPercentageOfTotal() {
+		if (correctAnswers == 0) {
+			return 1;
+		}
+
+		return (correctAnswers / language.getWords().size()) * 100;
 	}
 }

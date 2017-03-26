@@ -1,12 +1,17 @@
 package com.jeseromero.yourvocabulary.activity.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
+
+import com.jeseromero.yourvocabulary.activity.intent.ReceiveFileActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Version 1.0
@@ -50,11 +55,11 @@ public class StorageHelper {
 		return false;
 	}
 
-	public static String readFile(String fileName) throws IOException {
+	public static String readFile(Activity activity, Uri data) throws IOException {
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(activity.getContentResolver().openInputStream(data)));
 
 		StringBuilder stringBuilder = new StringBuilder();
-
-		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
 		String line;
 

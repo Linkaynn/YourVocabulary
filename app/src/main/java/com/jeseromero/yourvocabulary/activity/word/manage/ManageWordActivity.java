@@ -1,7 +1,9 @@
 package com.jeseromero.yourvocabulary.activity.word.manage;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,10 +17,13 @@ import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
+import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.util.Translation;
+import com.jeseromero.yourvocabulary.util.Translator;
 
 public class ManageWordActivity extends AppCompatActivity {
 
@@ -38,11 +43,18 @@ public class ManageWordActivity extends AppCompatActivity {
 
 	private Word word;
 
+	private View suggestionLayout;
+
+	private TextView suggestion;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_manage_word);
+
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -53,6 +65,18 @@ public class ManageWordActivity extends AppCompatActivity {
 		languageTextView = (TextView) findViewById(R.id.language);
 
 		translationEditText = (EditText) findViewById(R.id.translate);
+
+		suggestionLayout = findViewById(R.id.suggest_layout);
+
+		suggestion = ((TextView) findViewById(R.id.suggest));
+
+		suggestion.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				translationEditText.setText(suggestion.getText().toString());
+				suggestionLayout.setVisibility(View.GONE);
+			}
+		});
 
 		if (getIntent().getBooleanExtra(EDIT_ACTION, false)) {
 			retrieveData();
@@ -66,14 +90,14 @@ public class ManageWordActivity extends AppCompatActivity {
 			long languageId = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 			if (languageId != -1) {
-				language = new LanguageManager().selectLanguage(languageId);
+				language = new LanguageManager().getLanguage(languageId);
 				languageTextView.setText(language.getName());
 			}
 		}
 
 		ListView languagesList = (ListView) findViewById(R.id.languages);
 
-		languagesList.setAdapter(new LanguageAdapter(new LanguageManager().selectAll(), this));
+		languagesList.setAdapter(new LanguageAdapter(new LanguageManager().getAllLanguages(), this));
 
 		languagesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -94,15 +118,15 @@ public class ManageWordActivity extends AppCompatActivity {
 		if (languageId == -1) {
 			finish();
 
-			toast("Do not exist the language of the word");
+			toastError();
 		}
 
-		language = new LanguageManager().selectLanguage(languageId);
+		language = new LanguageManager().getLanguage(languageId);
 
 		if (language == null) {
 			finish();
 
-			toast("Do not exist the language of the word");
+			toastError();
 		}
 
 		long wordId = intent.getLongExtra(WORD_ID, -1);
@@ -110,7 +134,7 @@ public class ManageWordActivity extends AppCompatActivity {
 		if (wordId == -1) {
 			finish();
 
-			toast("Do not exist the word");
+			toastError();
 		}
 
 		word = language.getWord(wordId);
@@ -118,26 +142,14 @@ public class ManageWordActivity extends AppCompatActivity {
 		if (word == null) {
 			finish();
 
-			toast("Do not exist the word");
-		}
-
-		language.removeWord(word);
-
-		LanguageWord languageWord = word.getRelation();
-
-		if (languageWord == null) {
-			finish();
-
-			toast("Do not exist the word");
-		} else {
-			languageWord.delete();
+			toastError();
 		}
 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.save, menu);
+		getMenuInflater().inflate(R.menu.wordactions, menu);
 		return true;
 	}
 
@@ -146,7 +158,7 @@ public class ManageWordActivity extends AppCompatActivity {
 		switch (item.getItemId()) {
 			case R.id.action_save:
 
-				String value = valueEditText.getText().toString();
+				final String value = valueEditText.getText().toString();
 
 				String translation = translationEditText.getText().toString();
 
@@ -177,17 +189,11 @@ public class ManageWordActivity extends AppCompatActivity {
 
 				if (!failed) {
 
-					word = new Word();
-
 					word.setValue(value);
 
 					word.setTranslation(translation);
 
-					language.addWord(word);
-
 					word.save();
-
-					new LanguageWord(language, word).save();
 
 					toast("Saved " + value + " as " + translation + " to " + language.getName() + " language.").show();
 
@@ -198,6 +204,32 @@ public class ManageWordActivity extends AppCompatActivity {
 					return false;
 				}
 
+			case R.id.action_suggest:
+				DialogBuilder.buildWarningDialogWithoutIcon(this,
+						"Do you want a suggestion?",
+						"If you want a suggestion, press OK. The suggested word will appear below the translation box, " +
+								"click on the suggestion to set suggestion as translation.",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								if (!valueEditText.getText().toString().trim().isEmpty()) {
+									try {
+										Translation translationText = new Translator().translate(valueEditText.getText().toString());
+
+										suggestionLayout.setVisibility(View.VISIBLE);
+
+										suggestion.setText(translationText.getTranslationText());
+									} catch (Exception e) {
+										e.printStackTrace();
+
+										Toast.makeText(ManageWordActivity.this, "Can'r retrieve the translation.", Toast.LENGTH_SHORT).show();
+									}
+								} else {
+									Toast.makeText(ManageWordActivity.this, "First write the word, please.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						}, null);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 
@@ -206,6 +238,10 @@ public class ManageWordActivity extends AppCompatActivity {
 
 	private Toast toast(String text) {
 		return Toast.makeText(this, text, Toast.LENGTH_SHORT);
+	}
+
+	private void toastError() {
+		toast("An error occurred.");
 	}
 
 }

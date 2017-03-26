@@ -20,8 +20,8 @@ public class DialogBuilder {
 		builder.show();
 	}
 
-	public static void buildAlertDialog(Context context, String title, String message, DialogInterface.OnClickListener onClickListener) {
-		new android.app.AlertDialog.Builder(context)
+	public static void buildWarningDialog(Context context, String title, String message, DialogInterface.OnClickListener onClickListener) {
+		new AlertDialog.Builder(context)
 				.setIcon(R.drawable.warning)
 				.setTitle(title)
 				.setMessage(message)
@@ -29,5 +29,22 @@ public class DialogBuilder {
 				.setNegativeButton("No", null)
 				.show();
 
+	}
+
+	public static void buildWarningDialogWithoutIcon(Context context, String title, String message, DialogInterface.OnClickListener yesListener, DialogInterface.OnClickListener noListener) {
+		new AlertDialog.Builder(context)
+				.setTitle(title)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.yes, yesListener)
+				.setNegativeButton(android.R.string.no, noListener)
+				.show();
+	}
+
+	public static void buildInfoDialog(Context context, String title, String message) {
+		new AlertDialog.Builder(context)
+				.setTitle(title)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.yes, null)
+				.show();
 	}
 }

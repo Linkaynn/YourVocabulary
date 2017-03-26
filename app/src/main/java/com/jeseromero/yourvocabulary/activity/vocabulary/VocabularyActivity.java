@@ -16,7 +16,7 @@ import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
 import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.ArrayList;
 
@@ -55,7 +55,7 @@ public class VocabularyActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 
-		mSectionsPagerAdapter.setLanguages(new LanguageManager().selectAll());
+		mSectionsPagerAdapter.setLanguages(new LanguageManager().getAllLanguages());
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -65,7 +65,7 @@ public class VocabularyActivity extends AppCompatActivity {
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 
-			languages = new LanguageManager().selectAll();
+			languages = new LanguageManager().getAllLanguages();
 		}
 
 		@Override

@@ -1,4 +1,4 @@
-package com.jeseromero.yourvocabulary.persistence;
+package com.jeseromero.yourvocabulary.manager;
 
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
@@ -22,15 +22,7 @@ public class LanguageManager {
 		load();
 	}
 
-	public void addLanguage(Language language) {
-		if (!languages.contains(language)) {
-			languages.add(language);
-		}
-
-		commit();
-	}
-
-	public ArrayList<Language> selectAll() {
+	public ArrayList<Language> getAllLanguages() {
 		return languages;
 	}
 
@@ -52,13 +44,7 @@ public class LanguageManager {
 		}
 	}
 
-	private void commit() {
-		for (Language language : languages) {
-			language.saveAll();
-		}
-	}
-
-	public Language selectLanguage(long id) {
+	public Language getLanguage(long id) {
 		for (Language language : languages) {
 			if (language.getId() == id) {
 				return language;
@@ -68,10 +54,10 @@ public class LanguageManager {
 		return null;
 	}
 
-	public ArrayList<Language> getLanguagesPlayables() {
+	public ArrayList<Language> getLanguagesPlayable() {
 		ArrayList<Language> languages = new ArrayList<>();
 
-		for (Language language : selectAll()) {
+		for (Language language : this.languages) {
 			if (language.getWords().size() >= 4) {
 				languages.add(language);
 			}
@@ -88,5 +74,9 @@ public class LanguageManager {
 		}
 
 		return null;
+	}
+
+	public static int getLanguageCount() {
+		return new Select().all().from(Language.class).count();
 	}
 }

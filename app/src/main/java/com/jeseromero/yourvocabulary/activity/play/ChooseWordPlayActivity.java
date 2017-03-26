@@ -14,8 +14,8 @@ import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
-import com.jeseromero.yourvocabulary.persistence.StatisticsManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +49,7 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 	private Word lastWord;
 
 	private ArrayList<Word> remainingWords;
+	private PieView progressPie;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +59,12 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 		final long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 		if (languageID == -1) {
-			Toast.makeText(this, "Language not found", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "An error occurred.", Toast.LENGTH_SHORT).show();
 
 			finish();
 		}
 
-		language = new LanguageManager().selectLanguage(languageID);
+		language = new LanguageManager().getLanguage(languageID);
 
 		remainingWords = new ArrayList<>();
 
@@ -80,6 +81,7 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 		statistics.setLanguage(language);
 
 		pieView = (PieView) findViewById(R.id.pie);
+		progressPie = (PieView) findViewById(R.id.progress);
 
 		wordTextView = (TextView) findViewById(R.id.word);
 
@@ -125,7 +127,7 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 					}
 
 				} else {
-					statistics.addTries();
+					statistics.addTry();
 
 					view.setBackgroundColor(ContextCompat.getColor(ChooseWordPlayActivity.this, R.color.colorPrimaryDark));
 
@@ -133,6 +135,8 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 				}
 
 				pieView.setPercentage(statistics.getPercentage());
+
+				progressPie.setPercentage(statistics.getPercentageOfTotal());
 			}
 		};
 
@@ -146,6 +150,8 @@ public class ChooseWordPlayActivity extends AppCompatActivity {
 		statistics.setTries(0);
 
 		pieView.setPercentage(100);
+
+		progressPie.setPercentage(1);
 
 		lastWord = null;
 

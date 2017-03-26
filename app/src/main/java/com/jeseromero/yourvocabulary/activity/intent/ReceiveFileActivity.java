@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,25 +17,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.home.HomeActivity;
 import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
-import com.jeseromero.yourvocabulary.activity.share.MainShareActivity;
-import com.jeseromero.yourvocabulary.activity.util.IntentHelper;
 import com.jeseromero.yourvocabulary.activity.util.JSONHelper;
 import com.jeseromero.yourvocabulary.activity.util.StorageHelper;
 import com.jeseromero.yourvocabulary.activity.vocabulary.languages.adapter.WordAdapter;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import io.fabric.sdk.android.Fabric;
 
 public class ReceiveFileActivity extends AppCompatActivity {
 
@@ -51,6 +52,8 @@ public class ReceiveFileActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_receive_file);
+
+		Fabric.with(this, new Crashlytics());
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -116,11 +119,10 @@ public class ReceiveFileActivity extends AppCompatActivity {
 		if (data != null) {
 
 			try {
-				externalLanguages = new JSONHelper(this).fromLanguageArray(StorageHelper.readFile(data.getPath()));
+				externalLanguages = new JSONHelper(this).fromLanguageArray(StorageHelper.readFile(this, data));
 			} catch (IOException e) {
+				Crashlytics.logException(e);
 				e.printStackTrace();
-
-				startActivity(IntentHelper.createShareTextIntent(e.getMessage()));
 			}
 
 			if (externalLanguages != null) {
@@ -153,10 +155,12 @@ public class ReceiveFileActivity extends AppCompatActivity {
 			}
 
 			if (externalLanguages != null) {
-				if (!externalLanguages.isEmpty()) {
+				if (!relations.keySet().isEmpty()) {
 					languageListView.setAdapter(new LanguageAdapter(externalLanguages, this));
 
 					wordsListView.setAdapter(new WordAdapter(externalLanguages.get(0).getWords(), this));
+
+					Answers.getInstance().logCustom(new CustomEvent("Data imported"));
 				} else {
 					Toast.makeText(this, "No differences found", Toast.LENGTH_SHORT).show();
 

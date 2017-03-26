@@ -1,14 +1,12 @@
 package com.jeseromero.yourvocabulary.activity.util;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
 import java.io.File;
 import java.io.FileOutputStream;

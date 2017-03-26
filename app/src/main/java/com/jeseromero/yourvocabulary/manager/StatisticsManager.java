@@ -1,4 +1,4 @@
-package com.jeseromero.yourvocabulary.persistence;
+package com.jeseromero.yourvocabulary.manager;
 
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
@@ -6,7 +6,6 @@ import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

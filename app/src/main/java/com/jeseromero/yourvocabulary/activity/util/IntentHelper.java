@@ -38,4 +38,8 @@ public class IntentHelper {
 
 		return Intent.createChooser(sendIntent, title);
 	}
+
+	public static Intent createBrowserIntent(String url) {
+		return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+	}
 }
