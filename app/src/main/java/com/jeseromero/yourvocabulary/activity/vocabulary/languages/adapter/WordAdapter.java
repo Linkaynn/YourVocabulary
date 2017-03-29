@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.jeseromero.yourvocabulary.R;
+import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  */
 
 public class WordAdapter extends ArrayAdapter<Word> {
-	private final ArrayList<Word> words;
+	private ArrayList<Word> words;
 
 	public WordAdapter(@NonNull ArrayList<Word> words, @NonNull Context context) {
 		super(context, R.layout.word_item, words);
@@ -58,6 +59,12 @@ public class WordAdapter extends ArrayAdapter<Word> {
 		translation.setText(word.getTranslation());
 
 		return view;
+	}
+
+	public void setWords(ArrayList<Word> words) {
+		this.words = words;
+
+		notifyDataSetChanged();
 	}
 
 	@Override

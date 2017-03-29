@@ -25,12 +25,16 @@ public class Statistic extends Model {
 	@Column(name = "TRIES")
 	private float tries;
 
+	@Column(name = "SKIPED")
+	private float skipedWordsCount;
+
 	public Statistic() {
 		super();
 
 		date = new Date();
 		correctAnswers = 0;
 		tries = 0;
+		skipedWordsCount = 0;
 	}
 
 	public Language getLanguage() {
@@ -62,6 +66,11 @@ public class Statistic extends Model {
 		this.tries = tries;
 	}
 
+	public void addSkiped() {
+		addTry();
+		skipedWordsCount++;
+	}
+
 	public float getPercentage() {
 		float percentage = (correctAnswers / tries) * 100;
 
@@ -81,10 +90,10 @@ public class Statistic extends Model {
 	}
 
 	public float getPercentageOfTotal() {
-		if (correctAnswers == 0) {
+		if (correctAnswers + skipedWordsCount == 0) {
 			return 1;
 		}
 
-		return (correctAnswers / language.getWords().size()) * 100;
+		return ((correctAnswers + skipedWordsCount) / language.getWords().size()) * 100;
 	}
 }

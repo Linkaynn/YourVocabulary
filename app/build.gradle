@@ -22,8 +22,8 @@ android {
         applicationId "com.jeseromero.yourvocabulary"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 6
-        versionName "3.0v"
+        versionCode 7
+        versionName "3.1v"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

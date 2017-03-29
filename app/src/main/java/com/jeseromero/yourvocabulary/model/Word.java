@@ -68,6 +68,6 @@ public class Word extends Model {
 
 	@Override
 	public String toString() {
-		return value;
+		return value + " - " + translation;
 	}
 }

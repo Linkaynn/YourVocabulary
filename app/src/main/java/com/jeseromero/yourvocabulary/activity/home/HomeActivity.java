@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_home);
 
 		SharedPreferencesManager.init(this);
+
 		Fabric.with(this, new Crashlytics());
 
 		if (SharedPreferencesManager.getBoolean(Key.RECENTLY_INSTALLED)) {
@@ -132,8 +134,6 @@ public class HomeActivity extends AppCompatActivity {
 		findViewById(R.id.share_text).setOnClickListener(shareListener);
 
 //		mock();
-
-//		deleteDatabase();
 	}
 
 	private void mock() {
@@ -210,8 +210,10 @@ public class HomeActivity extends AppCompatActivity {
 		String aaName = ReflectionUtils.getMetaData(getApplicationContext(), "AA_DB_NAME");
 
 		if (aaName == null) {
-			aaName = "yourvocabulary.db";
+			aaName = "yourlanguage.db";
 		}
+
+		Log.d(HomeActivity.class.getName(), "Eliminada base de datos: " + aaName);
 
 		deleteDatabase(aaName);
 		ActiveAndroid.initialize(this);

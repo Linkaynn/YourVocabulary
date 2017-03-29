@@ -19,7 +19,7 @@
 			android:value="yourlanguage.db"/>
 		<meta-data
 			android:name="AA_DB_VERSION"
-			android:value="0"/>
+			android:value="2"/>
 		<meta-data
             android:name="io.fabric.ApiKey"
             android:value="44894a6a9b6a6c8768eaef1ed742bc9c8e782011" />
@@ -79,7 +79,7 @@
 			android:theme="@style/AppTheme.NoActionBar">
 		</activity>
 
-		<activity android:name=".activity.play.WriteWordPlayActivity"/>
+		<activity android:name=".activity.play.WriteWordPlayActivity" android:theme="@style/AppTheme.NoActionBar"/>
 
 		<activity android:name=".activity.share.MainShareActivity"/>
 

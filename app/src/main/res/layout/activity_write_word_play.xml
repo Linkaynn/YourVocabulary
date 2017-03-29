@@ -1,116 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.jeseromero.yourvocabulary.activity.play.ChooseWordPlayActivity">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:plainpie="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.jeseromero.yourvocabulary.activity.play.ChooseWordPlayActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+	<android.support.design.widget.CoordinatorLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".activity.intent.ReceiveTextActivity">
 
-            <LinearLayout
-	            android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
 
-	            <LinearLayout
-		            android:orientation="vertical"
-		            android:layout_weight="1"
-		            android:layout_width="0dp"
-		            android:layout_marginLeft="5dp"
-		            android:layout_height="wrap_content">
+			<android.support.design.widget.AppBarLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:theme="@style/AppTheme.AppBarOverlay">
 
-		            <TextView
-			            android:textAlignment="center"
-			            android:layout_width="match_parent"
-			            android:layout_height="wrap_content"
-			            android:text="Your progress"
-			            android:textColor="@color/black"/>
+				<android.support.v7.widget.Toolbar
+					android:id="@+id/toolbar"
+					android:layout_width="match_parent"
+					android:layout_height="?attr/actionBarSize"
+					android:background="?attr/colorPrimary"
+					app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-		            <az.plainpie.PieView
-			            android:id="@+id/progress"
-			            android:layout_width="45dp"
-			            android:layout_height="45dp"
-			            android:layout_gravity="center"
-			            plainpie:inner_pie_padding="5"
-			            plainpie:inner_text_visibility="true"
-			            plainpie:percentage="100"
-			            plainpie:percentage_size="12"/>
+			</android.support.design.widget.AppBarLayout>
 
-	            </LinearLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
 
-	            <LinearLayout
-		            android:orientation="vertical"
-		            android:layout_alignRight="@+id/word"
-		            android:layout_marginRight="5dp"
-		            android:layout_weight="1"
-		            android:layout_width="0dp"
-		            android:layout_height="wrap_content">
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp">
 
-		            <TextView
-			            android:textAlignment="center"
-			            android:layout_width="match_parent"
-			            android:layout_height="wrap_content"
-			            android:text="Your performance"
-			            android:textColor="@color/black"/>
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_marginLeft="5dp"
+						android:layout_weight="1"
+						android:orientation="vertical">
 
-		            <az.plainpie.PieView
-			            android:id="@+id/pie"
-			            android:layout_width="45dp"
-			            android:layout_height="45dp"
-			            android:layout_gravity="center"
-			            plainpie:inner_pie_padding="5"
-			            plainpie:inner_text_visibility="true"
-			            plainpie:percentage="100"
-			            plainpie:percentage_size="12"/>
+						<TextView
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:text="Your progress"
+							android:textAlignment="center"
+							android:textColor="@color/black"/>
 
-	            </LinearLayout>
+						<az.plainpie.PieView
+							android:id="@+id/progress"
+							android:layout_width="45dp"
+							android:layout_height="45dp"
+							android:layout_gravity="center"
+							plainpie:inner_pie_padding="5"
+							plainpie:inner_text_visibility="true"
+							plainpie:percentage="100"
+							plainpie:percentage_size="12"/>
 
-            </LinearLayout>
+					</LinearLayout>
 
-	    <TextView
-		    android:id="@+id/word"
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_alignRight="@+id/word"
+						android:layout_marginRight="5dp"
+						android:layout_weight="1"
+						android:orientation="vertical">
 
-		    android:layout_centerVertical="true"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:text="WORD"
-		    android:layout_marginTop="10dp"
-		    android:textAlignment="center"
-		    android:textAllCaps="true"
-		    android:textColor="@color/black"
-		    android:textSize="40sp"
-		    android:textStyle="bold"/>
+						<TextView
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:text="Your performance"
+							android:textAlignment="center"
+							android:textColor="@color/black"/>
 
-	    <TextView
-		    android:id="@+id/hint"
-		    android:visibility="gone"
-		    android:letterSpacing="0.1"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:text="HINT"
-		    android:textColor="@color/colorPrimary"
-		    android:textStyle="bold"
-		    android:textAlignment="center"
-		    android:textSize="25sp"/>
+						<az.plainpie.PieView
+							android:id="@+id/pie"
+							android:layout_width="45dp"
+							android:layout_height="45dp"
+							android:layout_gravity="center"
+							plainpie:inner_pie_padding="5"
+							plainpie:inner_text_visibility="true"
+							plainpie:percentage="100"
+							plainpie:percentage_size="12"/>
 
-	    <EditText
-                android:id="@+id/answer"
-                android:imeOptions="actionDone"
-                android:lines="1"
-                android:inputType="text"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Your answer"/>
+					</LinearLayout>
+
+				</LinearLayout>
+
+				<TextView
+					android:id="@+id/word"
+
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_marginTop="10dp"
+					android:text="WORD"
+					android:textAlignment="center"
+					android:textAllCaps="true"
+					android:textColor="@color/black"
+					android:textSize="40sp"
+					android:textStyle="bold"/>
+
+				<TextView
+					android:id="@+id/hint"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:letterSpacing="0.1"
+					android:text="HINT"
+					android:textAlignment="center"
+					android:textColor="@color/colorPrimary"
+					android:textSize="25sp"
+					android:textStyle="bold"
+					android:visibility="gone"/>
+
+				<EditText
+					android:id="@+id/answer"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="10dp"
+					android:layout_marginRight="10dp"
+					android:layout_marginTop="20dp"
+					android:hint="Your answer"
+					android:imeOptions="actionDone"
+					android:inputType="text"
+					android:lines="1"/>
 
 
-    </LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+	</android.support.design.widget.CoordinatorLayout>
+
 
 </android.support.constraint.ConstraintLayout>

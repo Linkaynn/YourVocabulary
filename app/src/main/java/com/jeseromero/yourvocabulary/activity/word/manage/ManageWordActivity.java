@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,11 @@ public class ManageWordActivity extends AppCompatActivity {
 	private EditText valueEditText;
 
 	private TextView languageTextView;
+
+	/**
+	 * Means if language was changed or if is a new word
+	 */
+	private boolean languageChanged = true;
 
 	private Language language;
 
@@ -90,6 +96,7 @@ public class ManageWordActivity extends AppCompatActivity {
 			long languageId = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 			if (languageId != -1) {
+				languageChanged = false;
 				language = new LanguageManager().getLanguage(languageId);
 				languageTextView.setText(language.getName());
 			}
@@ -103,6 +110,7 @@ public class ManageWordActivity extends AppCompatActivity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
+				languageChanged = true;
 				language = (Language) view.getTag();
 				languageTextView.setText(language.getName());
 			}
@@ -189,11 +197,34 @@ public class ManageWordActivity extends AppCompatActivity {
 
 				if (!failed) {
 
+					if (word == null) {
+						word = new Word();
+						languageChanged = true;
+					}
+
 					word.setValue(value);
 
 					word.setTranslation(translation);
 
 					word.save();
+
+					Log.d(getClass().getName(), "Word saved: " + word.toString());
+
+					if (languageChanged) {
+						LanguageWord relation = word.getRelation();
+
+						if (relation != null) {
+							relation.getLanguage().removeWord(word);
+
+							relation.delete();
+						}
+
+						Log.d(getClass().getName(), "Language changed to " + language.getName());
+
+						new LanguageWord(language, word).save();
+
+						language.addWord(word);
+					}
 
 					toast("Saved " + value + " as " + translation + " to " + language.getName() + " language.").show();
 

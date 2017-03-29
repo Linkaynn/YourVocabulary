@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,10 +38,12 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 	private Language language;
 
-	private ListView listView;
+	private ListView translationListView;
 
 	private WordAdapter wordAdapter;
+
 	private Toolbar toolbar;
+
 	private TextView languageNameTextView;
 
 	@Override
@@ -69,15 +72,15 @@ public class LanguageDetailActivity extends AppCompatActivity {
 
 		languageNameTextView.setText(language.getName());
 
-		listView = (ListView) findViewById(R.id.translations);
+		translationListView = (ListView) findViewById(R.id.translations);
 
 		final Collection<Word> words = language.getWords();
 
 		wordAdapter = new WordAdapter((ArrayList<Word>) words, getContext());
 
-		listView.setAdapter(wordAdapter);
+		translationListView.setAdapter(wordAdapter);
 
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		translationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				final Word word = (Word) view.getTag();
@@ -155,6 +158,14 @@ public class LanguageDetailActivity extends AppCompatActivity {
 		toolbar.setTitle("Language - " + language.getName());
 
 		languageNameTextView.setText(language.getName());
+
+		Log.d(LanguageDetailActivity.class.getName(), "Resumed:");
+
+		for (Word word : language.getWords()) {
+			Log.d(LanguageDetailActivity.class.getName(), word.toString());
+		}
+
+		wordAdapter.setWords(language.getWords());
 	}
 
 	@Override

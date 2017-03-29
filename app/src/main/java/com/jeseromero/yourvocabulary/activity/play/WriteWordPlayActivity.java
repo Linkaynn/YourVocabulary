@@ -4,7 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,11 +15,11 @@ import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Statistic;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.manager.LanguageManager;
-import com.jeseromero.yourvocabulary.manager.StatisticsManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,13 +46,19 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 
 	private PieView progressPie;
 	private TextView hintTextView;
+	private EditText answerEditText;
+	private long languageID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_write_word_play);
 
-		final long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+		setSupportActionBar(toolbar);
+
+		languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 		if (languageID == -1) {
 			Toast.makeText(this, "Language not found", Toast.LENGTH_SHORT).show();
@@ -79,25 +88,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 		wordTextView = (TextView) findViewById(R.id.word);
 		hintTextView = (TextView) findViewById(R.id.hint);
 
-		wordTextView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				DialogBuilder.buildWarningDialog(WriteWordPlayActivity.this, "Hint!", "Do you want a hint?\nThis action will increase you number of tries.", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						hintTextView.setVisibility(View.VISIBLE);
-
-						hintTextView.setText(generateHint());
-
-						statistics.addTry();
-
-						performancePie.setPercentage(statistics.getPercentage());
-					}
-				});
-			}
-		});
-
-		EditText answerEditText = (EditText) findViewById(R.id.answer);
+		answerEditText = (EditText) findViewById(R.id.answer);
 
 		answerEditText.setImeActionLabel("Check it!", KeyEvent.KEYCODE_ENTER);
 
@@ -118,16 +109,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 						hintTextView.setVisibility(View.GONE);
 
 						if (remainingWords.isEmpty()) {
-							statistics.setDate(new Date(System.currentTimeMillis()));
-
-							statistics.save();
-
-							Intent intent = new Intent(WriteWordPlayActivity.this, LanguageStatisticActivity.class);
-
-							intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
-
-							startActivity(intent);
-
+							finishGame();
 						} else {
 							play();
 						}
@@ -144,9 +126,7 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 						}
 					}
 
-					performancePie.setPercentage(statistics.getPercentage());
-
-					progressPie.setPercentage(statistics.getPercentageOfTotal());
+					updatePies();
 				}
 
 				return true;
@@ -166,22 +146,30 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 		play();
 	}
 
+	private void updatePies() {
+		performancePie.setPercentage(statistics.getPercentage());
+
+		progressPie.setPercentage(statistics.getPercentageOfTotal());
+	}
+
 	private void play() {
 
-		Random random = new Random();
+		if (!remainingWords.isEmpty()) {
+			Random random = new Random();
 
-		rightWord = remainingWords.get(random.nextInt(remainingWords.size()));
+			rightWord = remainingWords.get(random.nextInt(remainingWords.size()));
 
-		if (lastWord == null) {
+			if (lastWord == null) {
+				lastWord = rightWord;
+			} else if (lastWord.equals(rightWord)) {
+				play();
+				return;
+			}
+
 			lastWord = rightWord;
-		} else if (lastWord.equals(rightWord)) {
-			play();
-			return;
+
+			wordTextView.setText(rightWord.getTranslation());
 		}
-
-		lastWord = rightWord;
-
-		wordTextView.setText(rightWord.getTranslation());
 	}
 
 	private String generateHint() {
@@ -198,5 +186,66 @@ public class WriteWordPlayActivity extends AppCompatActivity {
 		}
 
 		return Arrays.toString(rightWordChars).replace("[", "").replace("]", "").replace(", ", "");
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.writewordactions, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_suggest:
+				DialogBuilder.buildWarningDialog(WriteWordPlayActivity.this, "Hint!", "Do you want a hint?\nThis action will increase you number of tries.", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						hintTextView.setVisibility(View.VISIBLE);
+
+						hintTextView.setText(generateHint());
+
+						statistics.addTry();
+
+						performancePie.setPercentage(statistics.getPercentage());
+					}
+				});
+				break;
+			case R.id.action_skip:
+				DialogBuilder.buildWarningDialogWithoutIcon(WriteWordPlayActivity.this, "Skip word", "Do you want to skip the word?\n   This action will increase your number of tries in 1.", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						statistics.addSkiped();
+
+						answerEditText.setText(null);
+
+						remainingWords.remove(rightWord);
+
+						hintTextView.setVisibility(View.GONE);
+
+						updatePies();
+
+						if (remainingWords.isEmpty()) {
+							finishGame();
+						} else {
+							play();
+						}
+					}
+				}, null);
+		}
+
+		return true;
+	}
+
+	private void finishGame() {
+		statistics.setDate(new Date(System.currentTimeMillis()));
+
+		statistics.save();
+
+		Intent intent = new Intent(WriteWordPlayActivity.this, LanguageStatisticActivity.class);
+
+		intent.putExtra(LanguageStatisticActivity.LANGUAGE_ID, languageID);
+
+		startActivity(intent);
 	}
 }
