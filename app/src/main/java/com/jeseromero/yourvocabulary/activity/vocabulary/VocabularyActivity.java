@@ -1,8 +1,8 @@
 package com.jeseromero.yourvocabulary.activity.vocabulary;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,9 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.jeseromero.yourvocabulary.R;
-import com.jeseromero.yourvocabulary.activity.vocabulary.languages.LanguageFragment;
+import com.jeseromero.yourvocabulary.activity.vocabulary.languages.VocabularyFragment;
+import com.jeseromero.yourvocabulary.activity.word.manage.ManageWordActivity;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.ArrayList;
 
@@ -41,13 +42,20 @@ public class VocabularyActivity extends AppCompatActivity {
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addWordButton);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(VocabularyActivity.this, ManageWordActivity.class));
+			}
+		});
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		mSectionsPagerAdapter.setLanguages(new LanguageManager().selectAll());
+		mSectionsPagerAdapter.setLanguages(new LanguageManager().getAllLanguages());
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -57,12 +65,12 @@ public class VocabularyActivity extends AppCompatActivity {
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 
-			languages = new LanguageManager().selectAll();
+			languages = new LanguageManager().getAllLanguages();
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			return LanguageFragment.newInstance(languages.get(position));
+			return VocabularyFragment.newInstance(languages.get(position));
 		}
 
 		@Override

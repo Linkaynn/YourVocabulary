@@ -5,6 +5,8 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 
+import java.util.List;
+
 /**
  * Version 1.0
  */
@@ -49,19 +51,23 @@ public class Word extends Model {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-
 		Word word = (Word) o;
 
-		return getId().equals(word.getId()) && value.equals(word.value) && translation.equals(word.translation);
+		return (getId() != null && getId().equals(word.getId())) || (translation != null && translation.equals(word.translation));
 	}
 
 	public LanguageWord getRelation() {
-		return ((LanguageWord) new Select().all().from(LanguageWord.class).where("WORD = '" + getId() + "'").limit(1).execute().get(0));
+		List<Model> models = new Select().all().from(LanguageWord.class).where("WORD = '" + getId() + "'").limit(1).execute();
+
+		if (models.isEmpty()) {
+			return null;
+		}
+
+		return ((LanguageWord) models.get(0));
 	}
 
 	@Override
 	public String toString() {
-		return value;
+		return value + " - " + translation;
 	}
 }

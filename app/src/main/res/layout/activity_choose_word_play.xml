@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:plainpie="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.jeseromero.yourvocabulary.activity.play.ChooseWordPlayActivity">
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginTop="20dp"
+		android:orientation="vertical">
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp">
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="5dp"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="Your progress"
+					android:textAlignment="center"
+					android:textColor="@color/black"/>
+
+				<az.plainpie.PieView
+					android:id="@+id/progress"
+					android:layout_width="45dp"
+					android:layout_height="45dp"
+					android:layout_gravity="center"
+					plainpie:inner_pie_padding="5"
+					plainpie:inner_text_visibility="true"
+					plainpie:percentage="100"
+					plainpie:percentage_size="12"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_alignRight="@+id/word"
+				android:layout_marginRight="5dp"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="Your performance"
+					android:textAlignment="center"
+					android:textColor="@color/black"/>
+
+				<az.plainpie.PieView
+					android:id="@+id/pie"
+					android:layout_width="45dp"
+					android:layout_height="45dp"
+					android:layout_gravity="center"
+					plainpie:inner_pie_padding="5"
+					plainpie:inner_text_visibility="true"
+					plainpie:percentage="100"
+					plainpie:percentage_size="12"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<TextView
+			android:id="@+id/word"
+
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginTop="10dp"
+			android:text="WORD"
+			android:textAlignment="center"
+			android:textAllCaps="true"
+			android:textColor="@color/black"
+			android:textSize="40sp"
+			android:textStyle="bold"/>
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="20dp">
+
+			<Button
+				android:id="@+id/answer_1"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_weight="1"
+				android:background="@color/colorAccent"
+				android:ellipsize="end"
+				android:maxLines="1"
+				android:shadowRadius="10"
+				android:text="Answer 1"
+				android:textColor="#FFFFFF"/>
+
+			<Button
+				android:id="@+id/answer_2"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_weight="1"
+				android:background="@color/colorAccent"
+				android:ellipsize="end"
+				android:maxLines="1"
+				android:shadowRadius="10"
+				android:text="Answer 2"
+				android:textColor="#FFFFFF"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/answer_3"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_weight="1"
+				android:background="@color/colorAccent"
+				android:ellipsize="end"
+				android:maxLines="1"
+				android:shadowRadius="10"
+				android:text="Answer 3"
+				android:textColor="#FFFFFF"/>
+
+			<Button
+				android:id="@+id/answer_4"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_weight="1"
+				android:background="@color/colorAccent"
+				android:ellipsize="end"
+				android:maxLines="1"
+				android:shadowRadius="10"
+				android:text="Answer 4"
+				android:textColor="#FFFFFF"/>
+
+		</LinearLayout>
+	</LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

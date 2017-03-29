@@ -2,261 +2,220 @@ package com.jeseromero.yourvocabulary.activity.home;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.activeandroid.util.ReflectionUtils;
-import com.github.johnpersano.supertoasts.library.Style;
-import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.crashlytics.android.Crashlytics;
 import com.jeseromero.yourvocabulary.R;
-import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
+import com.jeseromero.yourvocabulary.activity.language.LanguageActivity;
 import com.jeseromero.yourvocabulary.activity.language.ManageLanguageActivity;
+import com.jeseromero.yourvocabulary.activity.play.ChooseLanguageActivity;
+import com.jeseromero.yourvocabulary.activity.share.MainShareActivity;
 import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
 import com.jeseromero.yourvocabulary.activity.vocabulary.VocabularyActivity;
-import com.jeseromero.yourvocabulary.activity.vocabulary.languages.LanguageFragment;
-import com.jeseromero.yourvocabulary.manage.EditWordActivity;
+import com.jeseromero.yourvocabulary.manager.ChangeLogManager;
+import com.jeseromero.yourvocabulary.manager.Key;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.SharedPreferencesManager;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.LanguageWord;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
-import static com.jeseromero.yourvocabulary.R.id.word;
+import io.fabric.sdk.android.Fabric;
 
-public class HomeActivity extends AppCompatActivity
-		implements NavigationView.OnNavigationItemSelectedListener {
-
-	private ListView languageListView;
-	private LanguageAdapter languageAdapter;
+public class HomeActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		SharedPreferencesManager.init(this);
 
-		setSupportActionBar(toolbar);
+		Fabric.with(this, new Crashlytics());
 
-		setTitle("Your languages");
+		if (SharedPreferencesManager.getBoolean(Key.RECENTLY_INSTALLED)) {
+			SharedPreferencesManager.putBoolean(Key.RECENTLY_INSTALLED, false);
+			SharedPreferencesManager.putInt(Key.LAST_CHANGELOG, ChangeLogManager.getLastVersion());
+		} else {
+			int lastChangelog = SharedPreferencesManager.getInt(Key.LAST_CHANGELOG);
 
-		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+			int versionCode = -1;
+			String versionName = null;
 
-		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+			try {
+				PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+				versionCode = packageInfo.versionCode;
+				versionName = packageInfo.versionName;
+			} catch (PackageManager.NameNotFoundException e) {
+				Crashlytics.logException(e);
+				e.printStackTrace();
+			}
 
-		drawer.addDrawerListener(toggle);
+//			DialogBuilder.buildInfoDialog(this, "Version " + versionName, ChangeLogManager.getChangeLog(versionCode));
 
-		toggle.syncState();
+			if ((lastChangelog == -1 || lastChangelog < versionCode) && versionCode != -1 && versionName != null) {
+				String changeLog = ChangeLogManager.getChangeLog(versionCode);
 
-		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-		navigationView.setNavigationItemSelectedListener(this);
-
-//		mock();
-
-		languageListView = (ListView) findViewById(R.id.languages);
-
-		languageAdapter = new LanguageAdapter(new LanguageManager().selectAll(), this);
-		languageListView.setAdapter(languageAdapter);
-
-		languageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-				final Language language = (Language) view.getTag();
-
-				final Collection<Word> words = language.getWords();
-
-				final CharSequence[] actions = new CharSequence[]{"Edit", "Remove"};
-
-				DialogBuilder.buildChooserDialog(HomeActivity.this, "Actions", actions, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int selection) {
-						CharSequence action = actions[selection];
-
-						switch (action.toString()) {
-							case "Edit":
-								Intent intent = new Intent(HomeActivity.this, ManageLanguageActivity.class);
-
-								intent.putExtra(ManageLanguageActivity.LANGUAGE_ID, language.getId());
-
-								startActivity(intent);
-
-								break;
-
-							case "Remove":
-
-								for (Word word : words) {
-									word.getRelation().delete();
-									word.delete();
-								}
-
-								language.delete();
-
-								languageAdapter.remove(language);
-
-								SuperActivityToast.OnButtonClickListener onButtonClickListener = new SuperActivityToast.OnButtonClickListener() {
-									@Override
-									public void onClick(View view, Parcelable token) {
-
-										// Debo recrear los lenguajes y las palabras debido
-										// a que el ORM mantiene las referencias y internamente realiza un update sobre un elemento que no existe
-
-										Language newLanguage = new Language(language.getName());
-
-										for (Word word : words) {
-											newLanguage.addWord(new Word(word.getValue(), word.getTranslation()));
-										}
-
-										newLanguage.saveAll();
-
-										languageAdapter.add(newLanguage);
-									}
-								};
-
-								SuperActivityToast.create(HomeActivity.this, new Style(), Style.TYPE_BUTTON)
-										.setButtonText("UNDO")
-										.setOnButtonClickListener("undo_delete_language", null, onButtonClickListener)
-										.setText(language.getName() + " deleted")
-										.setDuration(3000).show();
-
-								break;
-						}
-
-					}
-				});
+				if (changeLog != null) {
+					DialogBuilder.buildInfoDialog(this, "Version " + versionName, changeLog);
+					SharedPreferencesManager.putInt(Key.LAST_CHANGELOG, versionCode);
+				}
 
 			}
-		});
+		}
 
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addLanguageButton);
-		fab.setOnClickListener(new View.OnClickListener() {
+		View.OnClickListener playListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				startActivity(new Intent(HomeActivity.this, ManageLanguageActivity.class));
-			}
-		});
+				ArrayList<Language> languagesPlayable = new LanguageManager().getLanguagesPlayable();
 
+				if (!languagesPlayable.isEmpty()) {
+					startActivity(new Intent(HomeActivity.this, ChooseLanguageActivity.class));
+				} else {
+					Toast.makeText(HomeActivity.this, "You need a language with 4 or more words to play", Toast.LENGTH_LONG).show();
+				}
+			}
+		};
+
+		View.OnClickListener languageListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(HomeActivity.this, LanguageActivity.class));
+			}
+		};
+
+		View.OnClickListener vocabularyListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						startActivity(new Intent(HomeActivity.this, ManageLanguageActivity.class));
+					}
+				};
+
+				if (LanguageManager.getLanguageCount() != 0) {
+					startActivity(new Intent(HomeActivity.this, VocabularyActivity.class));
+				} else {
+					DialogBuilder.buildWarningDialogWithoutIcon(HomeActivity.this, "You need a language", "No language detected. Do you want to create one?", yesListener, null);
+				}
+			}
+		};
+
+		View.OnClickListener shareListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivity(new Intent(HomeActivity.this, MainShareActivity.class));
+			}
+		};
+
+		findViewById(R.id.play_image).setOnClickListener(playListener);
+		findViewById(R.id.play_text).setOnClickListener(playListener);
+
+		findViewById(R.id.languages_image).setOnClickListener(languageListener);
+		findViewById(R.id.languages_text).setOnClickListener(languageListener);
+
+		findViewById(R.id.vocabulary_image).setOnClickListener(vocabularyListener);
+		findViewById(R.id.vocabulary_text).setOnClickListener(vocabularyListener);
+
+		findViewById(R.id.share_image).setOnClickListener(shareListener);
+		findViewById(R.id.share_text).setOnClickListener(shareListener);
+
+//		mock();
 	}
 
 	private void mock() {
+		deleteDatabase();
+
+		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
+			model.delete();
+		}
+
+		for (Model model : new Select().all().from(Word.class).execute()) {
+			model.delete();
+		}
+
+		for (Model model : new Select().all().from(Language.class).execute()) {
+			model.delete();
+		}
+
+		Language japanese = new Language("Japanese");
+
+		japanese.addWord(new Word("思い", "Pesado"));
+
+		japanese.addWord(new Word("こんにちは, こんばんは", "Buenas tardes"));
+
+		japanese.addWord(new Word("リストラン", "Restaurante"));
+
+		japanese.addWord(new Word("おはようございます", "Buenos días"));
+
+		japanese.addWord(new Word("おやすみなさい", "Buenas noches (Despedirse)"));
+
+		Language english = new Language("English");
+
+		english.addWord(new Word("Weight", "Peso"));
+
+		english.addWord(new Word("Hello", "Hola"));
+
+		english.addWord(new Word("Goodbye", "Adiós"));
+
+		english.addWord(new Word("Long", "Largo"));
+
+		english.addWord(new Word("Water", "Agua"));
+
+		english.addWord(new Word("Paper clip", "Clip"));
+
+		english.addWord(new Word("File folder", "Carpeta de ficheros"));
+
+		english.addWord(new Word("Stapler", "Grapadora"));
+
+		english.addWord(new Word("Scissors", "Tijeras"));
+
+		english.addWord(new Word("Highlighter", "Subrayador"));
+
+		english.addWord(new Word("Whiteboard", "Pizarra blanca"));
+
+		english.addWord(new Word("Box", "Caja"));
+
+		english.addWord(new Word("Bottle", "Botella"));
+
+		japanese.saveAll();
+
+		english.saveAll();
+
+		for (Language language : new LanguageManager().getAllLanguages()) {
+			System.out.println("LANGUAGE - " + language.getName());
+
+			for (Word word : language.getWords()) {
+				System.out.println("WORD - " + word.getValue());
+			}
+		}
+	}
+
+	private void deleteDatabase() {
 		ActiveAndroid.dispose();
 
 		String aaName = ReflectionUtils.getMetaData(getApplicationContext(), "AA_DB_NAME");
 
 		if (aaName == null) {
-			aaName = "yourvocabulary.db";
+			aaName = "yourlanguage.db";
 		}
+
+		Log.d(HomeActivity.class.getName(), "Eliminada base de datos: " + aaName);
 
 		deleteDatabase(aaName);
 		ActiveAndroid.initialize(this);
-
-//		for (Model model : new Select().all().from(LanguageWord.class).execute()) {
-//			model.delete();
-//		}
-//
-//		for (Model model : new Select().all().from(Word.class).execute()) {
-//			model.delete();
-//		}
-//
-//		for (Model model : new Select().all().from(Language.class).execute()) {
-//			model.delete();
-//		}
-//
-//		LanguageManager languageManager = new LanguageManager();
-//
-//		Language japanese = new Language("Japanese");
-//
-//		japanese.addWord(new Word("思い", "Pesado"));
-//
-//		languageManager.addLanguage(japanese);
-//
-//		Language english = new Language("English");
-//
-//		english.addWord(new Word("Weight", "Peso"));
-//
-//		languageManager.addLanguage(english);
-//
-//		for (Language language : new LanguageManager().selectAll()) {
-//			System.out.println("LANGUAGE - " + language.getName());
-//
-//			for (Word word : language.getWords()) {
-//				System.out.println("WORD - " + word.getValue());
-//			}
-//		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		languageAdapter.setLanguages(new LanguageManager().selectAll());
-	}
-
-	@Override
-	public void onBackPressed() {
-		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (drawer.isDrawerOpen(GravityCompat.START)) {
-			drawer.closeDrawer(GravityCompat.START);
-		} else {
-			super.onBackPressed();
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.home, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		int id = item.getItemId();
-
-		if (id == R.id.your_vocabuary) {
-
-			int size = new LanguageManager().selectAll().size();
-
-			if (size == 0) {
-				Toast.makeText(this, "Add new language first", Toast.LENGTH_SHORT).show();
-			} else {
-				startActivity(new Intent(this, VocabularyActivity.class));
-			}
-		}
-
-		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawer.closeDrawer(GravityCompat.START);
-		return true;
 	}
 }

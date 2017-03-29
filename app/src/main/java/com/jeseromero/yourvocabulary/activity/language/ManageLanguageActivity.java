@@ -10,10 +10,14 @@ import android.widget.Toast;
 
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.model.Language;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 
 import java.util.ArrayList;
 
+/**
+ * This class allow as long Extra a Language ID. Key: {@link ManageLanguageActivity#LANGUAGE_ID}
+ * If LANGUAGE_ID is not setted, its just a new language activity.
+ */
 public class ManageLanguageActivity extends AppCompatActivity {
 
 	public static final String LANGUAGE_ID = "LANGUAGE_ID";
@@ -30,7 +34,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 		long languageID = getIntent().getLongExtra(LANGUAGE_ID, -1);
 
 		if (languageID != -1) {
-			language = new LanguageManager().selectLanguage(languageID);
+			language = new LanguageManager().getLanguage(languageID);
 		}
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,7 +50,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.text_receiver, menu);
+		getMenuInflater().inflate(R.menu.save, menu);
 		return true;
 	}
 
@@ -57,7 +61,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 
 				String name = languageEditText.getText().toString();
 
-				ArrayList<Language> languages = new LanguageManager().selectAll();
+				ArrayList<Language> languages = new LanguageManager().getAllLanguages();
 
 				boolean exist = false;
 
@@ -83,7 +87,7 @@ public class ManageLanguageActivity extends AppCompatActivity {
 
 					language.save();
 
-					message = language.getName() + " updted.";
+					message = language.getName() + " updated.";
 				} else {
 					Language language = new Language(name);
 

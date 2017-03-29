@@ -1,9 +1,12 @@
 package com.jeseromero.yourvocabulary.activity.intent;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,14 +16,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.jeseromero.yourvocabulary.R;
 import com.jeseromero.yourvocabulary.activity.home.HomeActivity;
 import com.jeseromero.yourvocabulary.activity.intent.adapter.LanguageAdapter;
+import com.jeseromero.yourvocabulary.activity.util.DialogBuilder;
+import com.jeseromero.yourvocabulary.manager.LanguageManager;
 import com.jeseromero.yourvocabulary.model.Language;
 import com.jeseromero.yourvocabulary.model.Word;
-import com.jeseromero.yourvocabulary.persistence.LanguageManager;
+import com.jeseromero.yourvocabulary.util.Translation;
+import com.jeseromero.yourvocabulary.util.Translator;
 
 import java.util.ArrayList;
+
+import io.fabric.sdk.android.Fabric;
 
 public class ReceiveTextActivity extends AppCompatActivity {
 
@@ -34,11 +45,20 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 	private Language language = null;
 
+	private View suggestionLayout;
+
+	private TextView suggestion;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_recieve_text);
+
+		Fabric.with(this, new Crashlytics());
+
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -52,7 +72,19 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 		languagesList = (ListView) findViewById(R.id.languages);
 
-		ArrayList<Language> languages = new LanguageManager().selectAll();
+		suggestionLayout = findViewById(R.id.suggest_layout);
+
+		suggestion = ((TextView) findViewById(R.id.suggest));
+
+		suggestion.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				translationEditText.setText(suggestion.getText().toString());
+				suggestionLayout.setVisibility(View.GONE);
+			}
+		});
+
+		ArrayList<Language> languages = new LanguageManager().getAllLanguages();
 
 		if (languages.isEmpty()) {
 			Toast.makeText(this, "No language found", Toast.LENGTH_SHORT).show();
@@ -86,7 +118,7 @@ public class ReceiveTextActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.text_receiver, menu);
+		getMenuInflater().inflate(R.menu.wordactions, menu);
 		return true;
 	}
 
@@ -133,8 +165,36 @@ public class ReceiveTextActivity extends AppCompatActivity {
 					return false;
 				}
 
-				return true;
+				Answers.getInstance().logCustom(new CustomEvent("New word").putCustomAttribute("Language", language.getName()).putCustomAttribute("Value", value).putCustomAttribute("Translation", translation));
 
+				return true;
+			case R.id.action_suggest:
+
+				DialogBuilder.buildWarningDialogWithoutIcon(this,
+						"Do you want a suggestion?",
+						"If you want a suggestion, press OK. The suggested word will appear below the translation box, " +
+						"click on the suggestion to set suggestion as translation.",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								if (!wordTextView.getText().toString().trim().isEmpty()) {
+									try {
+										Translation translationText = new Translator().translate(wordTextView.getText().toString());
+
+										suggestionLayout.setVisibility(View.VISIBLE);
+
+										suggestion.setText(translationText.getTranslationText());
+									} catch (Exception e) {
+										e.printStackTrace();
+
+										Toast.makeText(ReceiveTextActivity.this, "Can'r retrieve the translation.", Toast.LENGTH_SHORT).show();
+									}
+								} else {
+									Toast.makeText(ReceiveTextActivity.this, "The word is empty. Something wrong?", Toast.LENGTH_SHORT).show();
+								}
+							}
+				}, null);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 
@@ -144,6 +204,17 @@ public class ReceiveTextActivity extends AppCompatActivity {
 	private void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 		if (sharedText != null) {
+
+			Log.d("YOUR_VOCABULARY", "RECEIVED TEXT: " + sharedText);
+
+			if (sharedText.matches(".*[@:#].*")) {
+				Toast.makeText(this, "Shared text contains illegal characters like '@:#', remove it first", Toast.LENGTH_LONG).show();
+
+				finish();
+
+				return;
+			}
+
 			wordTextView.setText(sharedText);
 		}
 	}
